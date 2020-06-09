@@ -1,8 +1,9 @@
 package com.chat.cache.util;
 
+
 public interface ICacheTool {
 
-	String getString(String key);
+	Object getString(String key);
 
-	void set(String key, Object value, int month);
+	void set(String key, Object val, int second);
 }

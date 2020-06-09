@@ -1,9 +1,15 @@
 package com.chat;
 
+import com.chat.cache.util.ICacheTool;
+import com.chat.cache.util.RedisClientTool;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.*;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
 import java.util.Set;
 
 /**
@@ -72,8 +78,8 @@ public class React implements Runnable {
 
 	class ReadHandler implements Runnable {
 		private SocketChannel sc;
-		private ByteBuffer readBf = ByteBuffer.allocate(1024);
-		private ByteBuffer writeBf = ByteBuffer.allocate(1024);
+		private ByteBuffer readBf;
+		private ByteBuffer writeBf;
 
 		public ReadHandler(Selector selector, SocketChannel sc) throws IOException {
 			this.sc = sc;
@@ -85,43 +91,40 @@ public class React implements Runnable {
 		@Override
 		public void run() {
 			try {
+				readBf = ByteBuffer.allocate(1042);
 				sc.read(readBf);
 				readBf.flip();
-				System.out.println();
-				new WriteHandler(selector, sc);
+				byte[] bytes = new byte[readBf.remaining()];
+				readBf.get(bytes);
+				handMessage(new String(bytes));
 			} catch (IOException e) {
 				e.printStackTrace();
+				try {
+					sc.close();
+				} catch (IOException ex) {
+					ex.printStackTrace();
+				}
 			}
 		}
 
-		class WriteHandler implements Runnable {
-			String httpResponse = "HTTP/1.1 200 OK\r\n" +
-					"Content-Type:text/html\r\n" +
-					"Connection:keep-alive\r\n" +
-					//允许跨域
-					"Access-Control-Allow-Origin:*\r\n" +
-					"Cache-Control:no-cache\r\n" +
-					"\r\n" +
-					"data:hello world";
-			SelectionKey key;
+		private void handMessage(String message) throws IOException {
+			if (message.contains("login")) {
+				String[] strings = message.substring("login".length() + 1).split(":");
+				Person person = new Person(strings[0], strings[1]);
+				ICacheTool cacheTool = new RedisClientTool();
+				cacheTool.set(strings[0], person, -1);
+				send("login success");
+			} else {
 
-			WriteHandler(Selector selector, SocketChannel sc) throws ClosedChannelException {
-				key = sc.register(selector, SelectionKey.OP_WRITE);
-				key.attach(this);
 			}
+		}
 
-			@Override
-			public void run() {
-				writeBf.put(httpResponse.getBytes());
-				writeBf.flip();
-				try {
-					sc.write(writeBf);
-					key.cancel();
-					sc.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+		private void send(String message) throws IOException {
+			writeBf = ByteBuffer.allocate(1024);
+			writeBf.put(message.getBytes());
+			writeBf.flip();
+			sc.write(writeBf);
+			sc.close();
 		}
 	}
 
