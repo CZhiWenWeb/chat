@@ -9,6 +9,8 @@ import java.io.Serializable;
  * @Description:
  */
 public class Person implements Serializable {
+	private static final long serialVersionUID = 3019070147903893841L;
+
 	public Person(String name, String pw) {
 		this.name = name;
 		this.password = pw;

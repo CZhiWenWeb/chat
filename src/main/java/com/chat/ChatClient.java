@@ -11,6 +11,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * @Author: czw
@@ -19,22 +20,35 @@ import java.util.Set;
  * @Description:
  */
 public class ChatClient extends Frame implements Runnable {
-	public ChatClient() throws IOException {
+	//并发测试
+	static CountDownLatch count = new CountDownLatch(100);
+
+	public ChatClient() {
 		//初始化窗口
 		initFrame(10, 10, 10, 10);
 		//初始化连接
 		initNetWork();
+		//分配缓存
+		bf = ByteBuffer.allocate(1024);
+		if (!openWindow) {
+			//只有一台机器使用系统时间为id
+			synchronized (ChatClient.class) {
+				name = String.valueOf(System.currentTimeMillis());
+			}
+		}
 	}
 
+	static final boolean openWindow = false;
+	static final String nextLine = "\r\n";
 	private boolean stop;
 	private String ip = "127.0.0.1";
 	private int port = 12346;
 	private Selector selector;
 	private SocketChannel sc;
-	private SelectionKey contentKey;
 	private TextField tfField;
 	private TextArea taContent;
 	private ByteBuffer bf;
+	private String name;
 	private void initFrame(int x, int y, int w, int h) {
 		this.tfField = new TextField();
 		this.taContent = new TextArea();
@@ -57,89 +71,137 @@ public class ChatClient extends Frame implements Runnable {
 		//添加回车监听
 		this.tfField.addActionListener(actionE -> {
 			String str = tfField.getText().trim();
-			try {
-				send(str);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			send(str);
+			taContent.append(str + nextLine);
 		});
 		this.pack();
-		this.setVisible(true);
+		//是否打开窗口
+		this.setVisible(openWindow);
 	}
 
-	private void login() throws InterruptedException, IOException {
-		String name = JOptionPane.showInputDialog("name");
-		String pw = JOptionPane.showInputDialog("pw");
-		while (!sc.finishConnect()) {
-			Thread.sleep(1000);
+	private void login() {
+		String name;
+		String pw;
+		if (openWindow) {
+			name = JOptionPane.showInputDialog("name");
+			pw = JOptionPane.showInputDialog("pw");
+		} else {
+			name = this.name;
+			pw = "sss";
+		}
+		try {
+			while (!sc.finishConnect()) {
+				Thread.sleep(100);
+			}
+		} catch (InterruptedException ignored) {
+		} catch (IOException e) {
+			System.out.println("socketChannel连接失败");
+			e.printStackTrace();
 		}
 		send("login:" + name + ":" + pw);
 	}
 
-	private void initNetWork() throws IOException {
-		//打开管道
-		SocketChannel sc = SocketChannel.open();
-		//设置非阻塞
-		sc.configureBlocking(false);
-		this.sc = sc;
-		//打开就绪事件选择器
-		Selector selector = Selector.open();
-		this.selector = selector;
-		//注册感兴趣事件为content
-		SelectionKey key = sc.register(selector, SelectionKey.OP_READ);
-	}
-
-	private void send(String message) throws IOException {
-		bf = ByteBuffer.allocate(1024);
-		bf.put(message.getBytes());
-		bf.flip();
-		sc.write(bf);
+	private void initNetWork() {
+		try {
+			//打开管道
+			SocketChannel sc = SocketChannel.open();
+			//设置非阻塞
+			sc.configureBlocking(false);
+			this.sc = sc;
+			//打开就绪事件选择器
+			Selector selector = Selector.open();
+			this.selector = selector;
+			//注册感兴趣事件为content和read
+			sc.register(selector, SelectionKey.OP_READ | SelectionKey.OP_CONNECT);
+		} catch (IOException e) {
+			System.out.println("initNetWork失败");
+			try {
+				if (sc.isOpen())
+					sc.close();
+				if (selector.isOpen())
+					selector.close();
+			} catch (IOException ignored) {
+			}
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void run() {
 
 		try {
+			try {
+				count.await();
+			} catch (InterruptedException e) {
+				System.out.println("countDownLatch异常");
+				e.printStackTrace();
+			}
 			//发起连接
 			sc.connect(new InetSocketAddress(ip, port));
-			int nums = selector.select();
 			while (!stop) {
+				int nums = selector.select();
 				Set<SelectionKey> keys;
 				if (nums > 0) {
 					keys = selector.selectedKeys();
 					for (SelectionKey key : keys)
-						//分发事件
-						dispatch(key);
+						handlerKey(key);
 					keys.clear();
 				}
 			}
 		} catch (IOException e) {
+			System.out.println("发起连接失败");
 			e.printStackTrace();
 		}
-
 	}
 
-	void dispatch(SelectionKey key) {
-
-	}
-
-	class ContentHandler implements Runnable {
-
-		@Override
-		public void run() {
-			try {
-
+	private void handlerKey(SelectionKey key) {
+		if (key.isValid()) {
+			if (key.isConnectable()) {
+				//连接就绪后登入
 				login();
-			} catch (InterruptedException | IOException e) {
-				e.printStackTrace();
+			}
+			if (key.isReadable()) {
+				bf.clear();
+				try {
+					sc.read(bf);
+					bf.flip();
+					byte[] bytes = new byte[bf.remaining()];
+					bf.get(bytes);
+					String temp = new String(bytes);
+					if (openWindow)
+						taContent.append(temp + nextLine);
+					else
+						System.out.println(temp);
+				} catch (IOException e) {
+					System.out.println("读取失败");
+					try {
+						sc.close();
+					} catch (IOException ignored) {
+					}
+					e.printStackTrace();
+				}
 			}
 		}
 	}
 
-
-	public static void main(String[] args) throws IOException {
-		ChatClient cc = new ChatClient();
-		cc.run();
+	private void send(String message) {
+		bf.clear();
+		bf.put(message.getBytes());
+		bf.flip();
+		try {
+			sc.write(bf);
+		} catch (IOException e) {
+			System.out.println("ChatClient  send()异常");
+			e.printStackTrace();
+		}
 	}
 
+	public static void main(String[] args) throws IOException {
+		for (int i = 0; i < 100; i++) {
+			ChatClient cc = new ChatClient();
+			Thread t = new Thread(cc);
+			t.start();
+			count.countDown();
+		}
+	}
 }

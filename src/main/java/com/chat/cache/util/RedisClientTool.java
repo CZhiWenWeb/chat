@@ -11,27 +11,29 @@ import java.io.*;
  * @Description:
  */
 public class RedisClientTool implements ICacheTool {
-	private String ip = "127.0.0.1";
-	private int port = 6379;
 	private Jedis jedis;
 	private SerializeUtil su;
 	public RedisClientTool() {
-		jedis = new Jedis(ip, port);
+		jedis = JedisUtil.getJedis();
 		su = new SerializeUtil();
 	}
 
 	@Override
 	public Object getString(String key) {
-		return su.unSerialize(jedis.get(key.getBytes()));
+		Object o = su.unSerialize(jedis.get(key.getBytes()));
+		//返回连接池
+		//jedis.close();
+		return o;
 	}
 
 	@Override
 	public void set(String key, Object val, int second) {
-		if (second == -1)
+		//if (second == -1)
 			jedis.set(key.getBytes(), su.serialize(val));
+		//jedis.close();
 			//nx不存在才set，xx存在才set;ex是秒，px是毫秒
-		else
-			jedis.set(key.getBytes(), su.serialize(val), "NX".getBytes(), "EX".getBytes(), second);
+		//else
+		//	jedis.set(key.getBytes(), su.serialize(val));
 	}
 
 	class SerializeUtil {

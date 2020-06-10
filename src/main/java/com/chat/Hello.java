@@ -8,6 +8,7 @@ package com.chat;
  */
 public class Hello {
 	public static void main(String[] args) {
-		System.out.println("hello");
+		ChatClient cc=new ChatClient();
+		cc.run();
 	}
 }
