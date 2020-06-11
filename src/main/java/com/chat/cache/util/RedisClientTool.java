@@ -22,18 +22,16 @@ public class RedisClientTool implements ICacheTool {
 	public Object getString(String key) {
 		Object o = su.unSerialize(jedis.get(key.getBytes()));
 		//返回连接池
-		//jedis.close();
+		jedis.close();
 		return o;
 	}
 
 	@Override
 	public void set(String key, Object val, int second) {
 		//if (second == -1)
-			jedis.set(key.getBytes(), su.serialize(val));
-		//jedis.close();
+		jedis.set(key.getBytes(), su.serialize(val));
+		jedis.close();
 			//nx不存在才set，xx存在才set;ex是秒，px是毫秒
-		//else
-		//	jedis.set(key.getBytes(), su.serialize(val));
 	}
 
 	class SerializeUtil {

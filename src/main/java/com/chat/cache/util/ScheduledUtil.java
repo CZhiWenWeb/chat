@@ -23,6 +23,8 @@ public class ScheduledUtil {
 		if (ses == null) {
 			ses = Executors.newScheduledThreadPool(2);
 			i = 1;
+		} else {
+			i++;
 		}
 		return ses.scheduleAtFixedRate(r, firt, seconds, TimeUnit.SECONDS);
 	}

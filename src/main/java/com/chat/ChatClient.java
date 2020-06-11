@@ -130,12 +130,7 @@ public class ChatClient extends Frame implements Runnable {
 	public void run() {
 
 		try {
-			try {
-				count.await();
-			} catch (InterruptedException e) {
-				System.out.println("countDownLatch异常");
-				e.printStackTrace();
-			}
+			//count.await();
 			//发起连接
 			sc.connect(new InetSocketAddress(ip, port));
 			while (!stop) {
@@ -150,6 +145,8 @@ public class ChatClient extends Frame implements Runnable {
 			}
 		} catch (IOException e) {
 			System.out.println("发起连接失败");
+			e.printStackTrace();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -185,6 +182,7 @@ public class ChatClient extends Frame implements Runnable {
 	}
 
 	private void send(String message) {
+		System.out.println("client send:" + message);
 		bf.clear();
 		bf.put(message.getBytes());
 		bf.flip();

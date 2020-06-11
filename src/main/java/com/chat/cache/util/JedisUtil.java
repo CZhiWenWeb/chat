@@ -34,6 +34,13 @@ public class JedisUtil {
 		jedisPoolConfig.setMaxTotal(maxtotal);
 		jedisPoolConfig.setMaxWaitMillis(maxwaitmillis);
 		jedisPool = new JedisPool(jedisPoolConfig, host, port);
+
+		//尝试预存放连接
+		Jedis[] jedis = new Jedis[3];
+		for (int i = 0; i < 3; i++)
+			jedis[i] = jedisPool.getResource();
+		for (int i = 0; i < 3; i++)
+			jedis[i].close();
 	}
 
 	public static Jedis getJedis() {
