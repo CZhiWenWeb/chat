@@ -8,7 +8,7 @@ package com.chat.cache.message;
  */
 public class RingBufferFlip {
 
-	public byte[] elements = null;
+	public Object[] elements = null;
 	private int capacity = 0;
 	private int writePos = 0;
 	private int readPos = 0;
@@ -17,7 +17,7 @@ public class RingBufferFlip {
 
 	public RingBufferFlip(int capacity) {
 		this.capacity = capacity;
-		this.elements = new byte[capacity];
+		this.elements = new Object[capacity];
 	}
 
 	public void reset() {
@@ -44,7 +44,7 @@ public class RingBufferFlip {
 		return readPos - writePos;
 	}
 
-	public boolean put(byte element) {
+	public boolean put(Object element) {
 		if (!flipped) { //未交换时
 			if (writePos == capacity) { //写入的数量等于容量时,交换
 				writePos = 0;
@@ -70,12 +70,12 @@ public class RingBufferFlip {
 		}
 	}
 
-	public byte take() {
+	public Object take() {
 		if (!flipped) {
 			if (readPos < writePos) {
 				return elements[readPos++];
 			} else {
-				return Byte.parseByte(null);
+				return null;
 			}
 		} else {
 			if (readPos == capacity) {
@@ -84,12 +84,11 @@ public class RingBufferFlip {
 				if (readPos < writePos) {
 					return elements[readPos++];
 				} else {
-					return Byte.parseByte(null);
+					return null;
 				}
 			} else {
 				return elements[readPos++];
 			}
 		}
 	}
-
 }
