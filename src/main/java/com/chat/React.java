@@ -2,7 +2,7 @@ package com.chat;
 
 import com.chat.cache.util.ICacheTool;
 import com.chat.cache.util.RedisClientTool;
-import com.chat.cache.util.ScheduledUtil;
+
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -50,8 +50,7 @@ public class React implements Runnable {
 
 				System.out.println(userOnLine.intValue());
 			};
-			//定时打印在线人数
-			ScheduledUtil.start(printUserOnLine, 0, 30);
+
 		} catch (Exception e) {
 			System.out.println("reactServer初始化失败");
 			e.printStackTrace();
