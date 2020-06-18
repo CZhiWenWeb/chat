@@ -1,6 +1,6 @@
 package com.chat.socket;
 
-import com.chat.timework.CheckSocketAlive;
+import com.chat.util.CheckSocketAlive;
 
 import java.io.Closeable;
 import java.io.IOException;

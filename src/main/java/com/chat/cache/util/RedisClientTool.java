@@ -3,6 +3,7 @@ package com.chat.cache.util;
 import redis.clients.jedis.Jedis;
 
 import java.io.*;
+import java.util.Set;
 
 /**
  * @Author: czw
@@ -33,6 +34,28 @@ public class RedisClientTool implements ICacheTool {
 		jedis.close();
 			//nx不存在才set，xx存在才set;ex是秒，px是毫秒
 	}
+
+	@Override
+	public long setAdd(String key, String... value) {
+		long n = jedis.sadd(key, value);
+		jedis.close();
+		return n;
+	}
+
+	@Override
+	public long setDel(String key, String... value) {
+		long n = jedis.srem(key, value);
+		jedis.close();
+		return 0;
+	}
+
+	@Override
+	public Set<String> getAllValues(String key) {
+		Set<String> strings = jedis.smembers(key);
+		jedis.close();
+		return strings;
+	}
+
 
 	class SerializeUtil {
 		//序列化
@@ -67,5 +90,11 @@ public class RedisClientTool implements ICacheTool {
 			}
 			return obj;
 		}
+	}
+
+	public static void main(String[] args) {
+		RedisClientTool redisClientTool = new RedisClientTool();
+		redisClientTool.jedis.set("1", "2");
+		redisClientTool.jedis.set("1", "3");
 	}
 }

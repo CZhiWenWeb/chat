@@ -4,10 +4,7 @@ import java.io.IOException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -21,7 +18,7 @@ public class ReaderProcessor implements Runnable {
 	public Queue<SocketReader> outboundSocket;
 	private boolean stop;
 	private Selector readSelector;
-	public static Map<Long, SocketReader> map = new HashMap<>();
+	public static Map map = new HashMap();
 
 	public ReaderProcessor(Queue<SocketChannel> queue) {
 		this.inboundSocket = queue;
@@ -57,7 +54,7 @@ public class ReaderProcessor implements Runnable {
 		while (sc != null) {
 			sc.configureBlocking(false);
 			sc.register(readSelector, SelectionKey.OP_READ)
-					.attach(new SocketReader(sc));
+					.attach(new SocketReader(sc, readSelector));
 			sc = inboundSocket.poll();
 		}
 
@@ -72,5 +69,18 @@ public class ReaderProcessor implements Runnable {
 			}
 			keys.clear();
 		}
+	}
+
+	public static SocketReader randomClientor() {
+		int random = new Random().nextInt(map.size());
+		Iterator it = map.values().iterator();
+		while (random-- > 0) {
+			it.next();
+		}
+		return (SocketReader) it.next();
+	}
+
+	public static Collection getAllClients() {
+		return map.values();
 	}
 }

@@ -1,10 +1,13 @@
-package com.chat.timework;
+package com.chat.util;
 
 import com.chat.socket.ReaderProcessor;
 import com.chat.socket.SocketReader;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -29,16 +32,16 @@ public class CheckSocketAlive implements Runnable {
 	@Override
 	public void run() {
 		long time = System.currentTimeMillis();
-		for (SocketReader socketReader : map.values()) {
-			if (time - socketReader.lastTime > 5000) {
-				try {
-					socketReader.close();
-					System.out.println(socketReader.socketId + ":close");
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+		//for (SocketReader socketReader : map.values()) {
+		//	if (time - socketReader.lastTime > 50000) {
+		//		try {
+		//			socketReader.close();
+		//			System.out.println(socketReader.socketId + ":close");
+		//		} catch (IOException e) {
+		//			e.printStackTrace();
+		//		}
+		//	}
+		//}
 		System.out.println("online:" + map.size());
 	}
 

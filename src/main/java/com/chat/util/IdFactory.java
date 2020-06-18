@@ -1,4 +1,4 @@
-package com.chat.client;
+package com.chat.util;
 
 /**
  * @Author: czw

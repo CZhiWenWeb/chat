@@ -10,7 +10,8 @@ import java.util.concurrent.CountDownLatch;
  * @Description:并发测试
  */
 public class CountClient extends Client {
-	static CountDownLatch count = new CountDownLatch(5000);
+	static int NUMs = 50;
+	static CountDownLatch count = new CountDownLatch(NUMs);
 
 	public CountClient(int port) throws IOException {
 		super(port);
@@ -28,7 +29,7 @@ public class CountClient extends Client {
 	}
 
 	public static void main(String[] args) throws IOException {
-		for (int i = 0; i < 5000; i++) {
+		for (int i = 0; i < NUMs; i++) {
 			new Thread(new CountClient(12346)).start();
 			count.countDown();
 		}

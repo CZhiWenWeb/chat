@@ -9,6 +9,7 @@ import java.io.IOException;
  * @Description:
  */
 public class Client implements Runnable {
+	public static String redisKey = "clientId";
 	private MsgAcceptor acceptor;
 	private MsgSend send;
 

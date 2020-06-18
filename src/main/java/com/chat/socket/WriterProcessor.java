@@ -1,8 +1,9 @@
 package com.chat.socket;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
+import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 
 /**
  * @Author: czw
@@ -12,7 +13,7 @@ import java.util.Queue;
  */
 public class WriterProcessor implements Runnable {
 	private Queue<SocketReader> outbound;
-
+	public static Map map = ReaderProcessor.map;
 	public WriterProcessor(Queue<SocketReader> queue) {
 		outbound = queue;
 	}
@@ -37,13 +38,37 @@ public class WriterProcessor implements Runnable {
 	private void handlerMsg() throws IOException {
 		SocketReader socketReader = outbound.poll();
 		while (socketReader != null) {
-			ByteBuffer byteBuffer = socketReader.byteBuffer;
-			byteBuffer.put((socketReader.socketId + ":hello").getBytes());
-			byteBuffer.flip();
-			socketReader.sc.write(byteBuffer);
-			byteBuffer.clear();
+			sendMsg(socketReader);
+			//ByteBuffer byteBuffer = socketReader.byteBuffer;
+			//byteBuffer.put((socketReader.socketId + ":hello").getBytes());
+			//byteBuffer.flip();
+			//socketReader.sc.write(byteBuffer);
+			//byteBuffer.clear();
 			socketReader = outbound.poll();
 		}
 	}
+
+	private void sendMsg(SocketReader socketReader) throws IOException {
+		Set<Integer> msgIds = socketReader.msgMap.keySet();  //需发送的msg
+		for (Integer msgId : msgIds) {
+			Queue<Long> toClientIds = socketReader.msgToIdsMap.get(msgId);
+			Long temp = toClientIds.poll();
+			while (temp != null) {
+				SocketReader toSocket = (SocketReader) map.get(temp);
+				if (toSocket.sc.isOpen()) {
+					toSocket.byteBuffer.put(socketReader.msgMap.get(msgId));
+					String end = "\r\nfrom:" + socketReader.socketId;
+					toSocket.byteBuffer.put(end.getBytes());
+					toSocket.byteBuffer.flip();
+					toSocket.sc.write(toSocket.byteBuffer);
+					toSocket.byteBuffer.clear();
+				}
+				temp = toClientIds.poll();
+			}
+			socketReader.msgToIdsMap.clear();
+		}
+		msgIds.clear();
+	}
+
 
 }

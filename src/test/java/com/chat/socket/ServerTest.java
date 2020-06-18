@@ -1,6 +1,8 @@
 package com.chat.socket;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @Author: czw
@@ -13,4 +15,12 @@ public class ServerTest {
 		Server server = new Server(12346);
 		server.run();
 	}
+}
+
+class A {
+	static Map<Integer, Integer> map = new HashMap<>();
+}
+
+class B {
+	static Map<Integer, Integer> bm = A.map;
 }

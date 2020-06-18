@@ -47,11 +47,6 @@ public class JedisUtil {
 		return jedisPool.getResource();
 	}
 
-	public static void close(Jedis jedis) {
-		if (jedis != null)
-			jedis.close();
-	}
-
 	public static void main(String[] args) {
 		Jedis jedis = JedisUtil.getJedis();
 		System.out.println(jedis);
