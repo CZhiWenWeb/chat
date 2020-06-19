@@ -31,7 +31,7 @@ public class CheckSocketAlive implements Runnable {
 
 	@Override
 	public void run() {
-		long time = System.currentTimeMillis();
+		//long time = System.currentTimeMillis();
 		//for (SocketReader socketReader : map.values()) {
 		//	if (time - socketReader.lastTime > 50000) {
 		//		try {

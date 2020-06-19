@@ -28,7 +28,7 @@ public class WriterProcessor implements Runnable {
 			}
 
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -55,13 +55,14 @@ public class WriterProcessor implements Runnable {
 			Long temp = toClientIds.poll();
 			while (temp != null) {
 				SocketReader toSocket = (SocketReader) map.get(temp);
-				if (toSocket.sc.isOpen()) {
-					toSocket.byteBuffer.put(socketReader.msgMap.get(msgId));
-					String end = "\r\nfrom:" + socketReader.socketId;
-					toSocket.byteBuffer.put(end.getBytes());
-					toSocket.byteBuffer.flip();
-					toSocket.sc.write(toSocket.byteBuffer);
-					toSocket.byteBuffer.clear();
+				if (toSocket != null && toSocket.sc.isOpen()) {
+					byte[] bytes = socketReader.msgMap.get(msgId);
+					toSocket.writeBuffer.put(bytes);
+					String end = " from:" + socketReader.socketId;
+					toSocket.writeBuffer.put(end.getBytes());   //后缀必然小于header
+					toSocket.writeBuffer.flip();
+					toSocket.sc.write(toSocket.writeBuffer);
+					toSocket.writeBuffer.clear();
 				}
 				temp = toClientIds.poll();
 			}

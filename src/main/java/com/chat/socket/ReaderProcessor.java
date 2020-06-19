@@ -36,19 +36,19 @@ public class ReaderProcessor implements Runnable {
 		while (!stop) {
 			try {
 				handlerSocketChannel();
-			} catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
-	private void handlerSocketChannel() throws IOException {
+	private void handlerSocketChannel() throws Exception {
 		SocketChannel sc = inboundSocket.poll();
 
 		while (sc != null) {
@@ -69,18 +69,5 @@ public class ReaderProcessor implements Runnable {
 			}
 			keys.clear();
 		}
-	}
-
-	public static SocketReader randomClientor() {
-		int random = new Random().nextInt(map.size());
-		Iterator it = map.values().iterator();
-		while (random-- > 0) {
-			it.next();
-		}
-		return (SocketReader) it.next();
-	}
-
-	public static Collection getAllClients() {
-		return map.values();
 	}
 }

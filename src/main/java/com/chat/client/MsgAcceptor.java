@@ -1,5 +1,7 @@
 package com.chat.client;
 
+import com.chat.util.FileUtil;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
@@ -14,12 +16,11 @@ import java.util.Set;
  * @Description:
  */
 public class MsgAcceptor implements Runnable {
-	private SocketChannel sc;
+
 	private Selector readSelector;
 	private ByteBuffer byteBuffer = ByteBuffer.allocateDirect(1024);
 
 	public MsgAcceptor(SocketChannel sc) throws IOException {
-		this.sc = sc;
 		this.readSelector = Selector.open();
 		sc.register(readSelector, SelectionKey.OP_READ);
 	}
@@ -38,7 +39,9 @@ public class MsgAcceptor implements Runnable {
 						byte[] bytes = new byte[byteBuffer.remaining()];
 						byteBuffer.get(bytes);
 						byteBuffer.clear();
-						System.out.println(new String(bytes));
+						int len = bytes.length;
+						new FileUtil(new String(bytes, len - 15, 14)).write(bytes);
+						//System.out.println(new String(bytes));
 					}
 					selectionKeys.clear();
 				}

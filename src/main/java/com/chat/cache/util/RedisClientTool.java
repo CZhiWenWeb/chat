@@ -92,7 +92,7 @@ public class RedisClientTool implements ICacheTool {
 		}
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		RedisClientTool redisClientTool = new RedisClientTool();
 		redisClientTool.jedis.set("1", "2");
 		redisClientTool.jedis.set("1", "3");

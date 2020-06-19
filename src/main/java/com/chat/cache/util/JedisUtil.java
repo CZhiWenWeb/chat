@@ -44,10 +44,11 @@ public class JedisUtil {
 	}
 
 	public static Jedis getJedis() {
+
 		return jedisPool.getResource();
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		Jedis jedis = JedisUtil.getJedis();
 		System.out.println(jedis);
 	}

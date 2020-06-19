@@ -1,8 +1,6 @@
 package com.chat.client;
 
 import com.chat.cache.util.RedisClientTool;
-import com.chat.socket.ReaderProcessor;
-import com.chat.socket.SocketReader;
 import com.chat.util.IdFactory;
 
 import java.io.IOException;
@@ -22,9 +20,10 @@ import java.util.Set;
 public class MsgSend implements Runnable {
 	public SocketChannel sc;
 	private SocketAddress address;
-	private ByteBuffer byteBuffer = ByteBuffer.allocateDirect(1024);
+	private ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
 	private long id;
 	private RedisClientTool redisClientTool = new RedisClientTool();
+
 	public MsgSend(int port) throws IOException {
 		this.sc = SocketChannel.open();
 		this.address = new InetSocketAddress("127.0.0.1", port);
@@ -46,7 +45,7 @@ public class MsgSend implements Runnable {
 
 			login();
 
-			Thread.sleep(1000 * 10);    //等待在线检测
+			Thread.sleep(1000);
 
 			sendToMany();
 			//while (true) {
@@ -60,10 +59,10 @@ public class MsgSend implements Runnable {
 	}
 
 	private void sendToOne() throws Exception {
-		SocketReader socketReader = ReaderProcessor.randomClientor();
+		Set set = redisClientTool.getAllValues(Client.redisKey);
 		String msg = "好好学习tiantianxiangshang";
 		byteBuffer.put(
-				createMsg(msg, String.valueOf(socketReader.socketId))
+				createMsg(msg, String.valueOf(set.iterator().next()))
 						.getMsg());
 		byteBuffer.flip();
 		sc.write(byteBuffer);
@@ -74,31 +73,50 @@ public class MsgSend implements Runnable {
 		String msg = "好好学习tiantianxiangshang";
 
 		Set set = redisClientTool.getAllValues(Client.redisKey);
-		String[] strings = new String[10];
+		String[] strings = new String[10];  //发送的ids
 		Iterator it = set.iterator();
-		for (int i = 0; i < 10; i++)
+		int nums = set.size() > 10 ? 10 : set.size();
+		for (int i = 0; i < nums; i++)
 			strings[i] = (String) it.next();
-		byteBuffer.put(
-				createMsg(msg, strings).getMsg()
-		);
+		Message message = createMsg(msg, strings);
+
+		int len = message.len();
+		int start = 0;
+		int i = write(message.getMsg(), start, len);
+		while (i < len) {
+			len -= i;
+			start += i;
+			i = write(message.getMsg(), start, len);
+		}
+
+		System.out.println("megLen:" + len + " write:" + start + i);
+	}
+
+	private int write(byte[] bytes, int start, int len) throws IOException {
+		byteBuffer.put(bytes, start, len);
 		byteBuffer.flip();
-		sc.write(byteBuffer);
+		int i = sc.write(byteBuffer);
 		byteBuffer.clear();
+		return i;
 	}
 
 	private Message createMsg(String msg, String... to) throws Exception {
-		StringBuilder header = new StringBuilder(Integer.toBinaryString(msg.length() + Message.startIndex) + id + "to" + to[0]);
+
+		StringBuilder temp = new StringBuilder();
+		for (int i = 1; i < to.length; i++) {
+			temp.append(to[i]).append('1');
+		}
+		if (to.length > 1)
+			temp.append(to[to.length - 1]).append('0');
+		temp.append(msg);
+		StringBuilder header = new StringBuilder(
+				Integer.toBinaryString(temp.toString().getBytes().length + Message.startIndex)   //计算消息长度
+						+ id + "to" + to[0]);
 		if (to.length > 1) {
 			header.append('1');
 		} else {
 			header.append('0');
 		}
-		StringBuilder temp = new StringBuilder();
-		for (int i = 0; i < to.length - 1; i++) {
-			temp.append(to[i]).append('1');
-		}
-		temp.append(to[to.length - 1]).append('0');
-		temp.append(msg);
 		Message message = new Message();
 		message.initMsg(temp.toString(), header.toString());
 		return message;

@@ -12,8 +12,14 @@ import java.util.Map;
  */
 public class ServerTest {
 	public static void main(String[] args) throws IOException {
+		int a=1;
+		s(a=3+a);
 		Server server = new Server(12346);
 		server.run();
+	}
+
+	public static void s(int i){
+		System.out.println(i);
 	}
 }
 
