@@ -10,7 +10,7 @@ import java.util.concurrent.CountDownLatch;
  * @Description:并发测试
  */
 public class CountClient extends Client {
-	static int NUMs = 20;
+	static int NUMs = 50;
 	static CountDownLatch count = new CountDownLatch(NUMs);
 
 	public CountClient(int port) throws IOException {

@@ -3,10 +3,12 @@ package com.chat.client;
 import com.chat.util.FileUtil;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
 /**
@@ -40,7 +42,8 @@ public class MsgAcceptor implements Runnable {
 						byteBuffer.get(bytes);
 						byteBuffer.clear();
 						int len = bytes.length;
-						new FileUtil(new String(bytes, len - 15, 14)).write(bytes);
+						System.out.println(new String(bytes, len - 14, 14));
+						FileUtil.addTake(bytes);        //记录消息
 						//System.out.println(new String(bytes));
 					}
 					selectionKeys.clear();
@@ -51,4 +54,10 @@ public class MsgAcceptor implements Runnable {
 			}
 		}
 	}
+
+	private void msgHander(byte[] bytes) {   //粘包处理
+		byte[] temp = "from:".getBytes(StandardCharsets.UTF_8);
+
+	}
+
 }

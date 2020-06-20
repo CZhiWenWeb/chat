@@ -1,13 +1,13 @@
 package com.chat.util;
 
+import com.chat.cache.util.RedisClientTool;
+import com.chat.client.Client;
 import com.chat.socket.ReaderProcessor;
 import com.chat.socket.SocketReader;
 
-import java.io.IOException;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -19,7 +19,14 @@ import java.util.concurrent.TimeUnit;
  * @Description:
  */
 public class CheckSocketAlive implements Runnable {
-	private CheckSocketAlive() {
+	private CheckSocketAlive() {        //key根据时间生成，每次断开连接都会失效,清理无效key
+		RedisClientTool clientTool = new RedisClientTool();
+		Set set = clientTool.getAllValues(Client.redisKey);
+		String[] strings = new String[set.size()];
+		Iterator it = set.iterator();
+		for (int i = 0; i < set.size(); i++)
+			strings[i] = (String) it.next();
+		clientTool.setDel(Client.redisKey, strings);
 	}
 
 	static Map<Long, SocketReader> map = ReaderProcessor.map;

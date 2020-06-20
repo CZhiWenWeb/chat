@@ -59,12 +59,17 @@ public class WriterProcessor implements Runnable {
 					byte[] bytes = socketReader.msgMap.get(msgId);
 					toSocket.writeBuffer.put(bytes);
 					String end = " from:" + socketReader.socketId;
-					toSocket.writeBuffer.put(end.getBytes());   //后缀必然小于header
+					toSocket.writeBuffer.put(end.getBytes());   //后缀必然小于header,不必校验cap
 					toSocket.writeBuffer.flip();
 					toSocket.sc.write(toSocket.writeBuffer);
 					toSocket.writeBuffer.clear();
 				}
 				temp = toClientIds.poll();
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 			socketReader.msgToIdsMap.clear();
 		}

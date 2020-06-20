@@ -22,6 +22,23 @@ public class CodeUtil {
 		return result;
 	}
 
+	//private static int findBytes(byte[] source, int offset, int count,
+	//                             byte[] target, int offsetT, int countT) {
+	//	int[] right = new int[256];
+	//
+	//	int skip;
+	//	for (int i = offset; i <= offset + count - countT; i += skip) {
+	//		for (int j = offsetT + count - 1; j >= 0; j--) {
+	//			skip = 0;
+	//			if (source[i + j] != target[j]) {
+	//				skip = j -
+	//			}
+	//			if (skip == 0)
+	//				return i;
+	//		}
+	//	}
+	//}
+
 	public static void main(String[] args) throws Exception {
 		int i = CodeUtil.binaryStringToInt("001101");
 	}

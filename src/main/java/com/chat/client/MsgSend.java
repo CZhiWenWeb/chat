@@ -23,7 +23,7 @@ public class MsgSend implements Runnable {
 	private ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
 	private long id;
 	private RedisClientTool redisClientTool = new RedisClientTool();
-
+	private static int maxToNums = 5;
 	public MsgSend(int port) throws IOException {
 		this.sc = SocketChannel.open();
 		this.address = new InetSocketAddress("127.0.0.1", port);
@@ -73,9 +73,9 @@ public class MsgSend implements Runnable {
 		String msg = "好好学习tiantianxiangshang";
 
 		Set set = redisClientTool.getAllValues(Client.redisKey);
-		String[] strings = new String[10];  //发送的ids
+		String[] strings = new String[maxToNums];  //发送的ids
 		Iterator it = set.iterator();
-		int nums = set.size() > 10 ? 10 : set.size();
+		int nums = set.size() > maxToNums ? maxToNums : set.size();
 		for (int i = 0; i < nums; i++)
 			strings[i] = (String) it.next();
 		Message message = createMsg(msg, strings);

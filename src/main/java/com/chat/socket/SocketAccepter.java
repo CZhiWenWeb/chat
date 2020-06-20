@@ -18,7 +18,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @Description:
  */
 public class SocketAccepter implements Runnable, Closeable {
-	public Queue<SocketChannel> socketQue = new LinkedBlockingQueue<>();
+	public Queue<SocketChannel> socketQue = new LinkedBlockingQueue<>();    //读消息队列
 	private ServerSocketChannel ssc;
 	private boolean stop;
 	private SocketAddress address;

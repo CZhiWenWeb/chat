@@ -13,12 +13,6 @@ public class IdFactory {
 		return Snow.createId();
 	}
 
-	public static void main(String[] args) {
-		while (true) {
-			System.out.println(IdFactory.createId());
-		}
-	}
-
 	static class Snow {
 		private static long MAX_SEQ = ~(-1 << 4);   //同毫秒最多生成15个
 		private static long SEQ = 0;
@@ -52,4 +46,9 @@ public class IdFactory {
 		}
 	}
 
+	public static void main(String[] args) {
+		while (true) {
+			System.out.println(IdFactory.createId());
+		}
+	}
 }

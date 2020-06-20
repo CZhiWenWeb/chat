@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
-import java.util.*;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 
 /**
  * @Author: czw
@@ -20,9 +22,9 @@ public class ReaderProcessor implements Runnable {
 	private Selector readSelector;
 	public static Map map = new HashMap();
 
-	public ReaderProcessor(Queue<SocketChannel> queue) {
+	public ReaderProcessor(Queue<SocketChannel> queue, Queue<SocketReader> readerQueue) {
 		this.inboundSocket = queue;
-		this.outboundSocket = new LinkedBlockingQueue<>();
+		this.outboundSocket = readerQueue;
 	}
 
 	@Override
