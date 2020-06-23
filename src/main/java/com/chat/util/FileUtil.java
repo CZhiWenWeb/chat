@@ -1,16 +1,13 @@
 package com.chat.util;
 
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import com.chat.client.MsgSend;
+
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -42,14 +39,14 @@ public class FileUtil {
 	}
 	private static int cap = 1024;
 	private static ByteBuffer byteBuffer;
-	private static BlockingQueue<byte[]> takeQue = new LinkedBlockingQueue<>(1000);
+	private static BlockingQueue<Task> takeQue = new LinkedBlockingQueue<>(1000);
 	private volatile static boolean open;
 	private static Map<String, FileChannel> mapChannel = new HashMap<>();
 	private static String dir;
 	private static String type = ".txt";
 
-	public static void addTake(byte[] bytes) {
-		takeQue.add(bytes);
+	public static void addTake(byte[] bytes, int offset, int count) {
+		takeQue.add(new Task(bytes, offset, count));
 		System.out.println("addTake");
 		synchronized (FileUtil.class) {     //保证只执行一个processor线程
 			if (!open) {
@@ -67,10 +64,10 @@ public class FileUtil {
 
 	private static void processor() throws IOException, InterruptedException {
 		while (open) {
-			byte[] bytes = takeQue.poll();
-			while (bytes != null) {
-				writeToFile(bytes);
-				bytes = takeQue.poll();
+			Task task = takeQue.poll();
+			while (task != null) {
+				writeToFile(task.data, task.offset, task.count);
+				task = takeQue.poll();
 			}
 			open = false;
 			close();
@@ -78,16 +75,16 @@ public class FileUtil {
 		System.out.println("end: " + takeQue.size());
 	}
 
-	private static void writeToFile(byte[] bytes) throws IOException {
-		String name = new String(bytes, bytes.length - 14, 14);
+	private static void writeToFile(byte[] bytes, int offset, int count) throws IOException {
+		String name = new String(bytes, offset + count - IdFactory.IDLEN, IdFactory.IDLEN);
 		System.out.println("writing: " + name);
 		if (mapChannel.containsKey(name)) {
 			if (mapChannel.get(name).isOpen()) {
-				write(mapChannel.get(name), bytes);
+				write(mapChannel.get(name), bytes, offset, count);
 			} else {
 				FileChannel fileChannel = openChannel(name);
 				if (fileChannel != null) {
-					write(fileChannel, bytes);
+					write(fileChannel, bytes, offset, count);
 					mapChannel.put(name, fileChannel);
 				}
 			}
@@ -95,7 +92,7 @@ public class FileUtil {
 			FileChannel fileChannel = openChannel(name);
 			if (fileChannel != null) {
 				mapChannel.put(name, fileChannel);
-				write(fileChannel, bytes);
+				write(fileChannel, bytes, offset, count);
 			}
 		}
 	}
@@ -112,26 +109,31 @@ public class FileUtil {
 			byteBuffer = null;
 	}
 
-	private static void write(FileChannel channel, byte[] bytes) throws IOException {
-		int len = bytes.length;
-		int start = 0;
-		while (len > cap) {
-			write(channel, bytes, start, cap);
-			start += cap;
-			len -= cap;
-		}
-		write(channel, bytes, start, len);
-		write(channel, new byte[]{'\r', '\n'}, 0, 2);
-	}
-
-	private static void write(FileChannel channel, byte[] bytes, int head, int len) throws IOException {
+	private static void write(FileChannel channel, byte[] bytes, int offset, int count) throws IOException {
 		if (byteBuffer == null)
 			byteBuffer = ByteBuffer.allocate(cap);
-		byteBuffer.put(bytes, head, len);
+		byteBuffer.put(bytes, offset, count);
 		byteBuffer.flip();
-		channel.write(byteBuffer);
+		int num = channel.write(byteBuffer);
 		byteBuffer.clear();
+		if (count > num) {
+			write(channel, bytes, offset + num, count - num);
+		} else {
+			byteBuffer.put(new byte[]{'\r', '\n'});
+			byteBuffer.flip();
+			channel.write(byteBuffer);
+			byteBuffer.clear();
+		}
 	}
+
+	//private static void writeByte(FileChannel channel, byte[] bytes, int head, int len) throws IOException {
+	//	if (byteBuffer == null)
+	//		byteBuffer = ByteBuffer.allocate(cap);
+	//	byteBuffer.put(bytes, head, len);
+	//	byteBuffer.flip();
+	//	channel.write(byteBuffer);
+	//	byteBuffer.clear();
+	//}
 
 	private static FileChannel openChannel(String name) {
 		try {
@@ -143,22 +145,70 @@ public class FileUtil {
 	}
 
 	public static void main(String[] args) throws IOException {
-		Random random = new Random();
-		String[] strings = new String[10];
-		for (int i = 0; i < strings.length; i++) {
-			strings[i] = Arrays.toString(random.ints(15, 0, 10).toArray());
-		}
-
-		for (int i = 0; i < 10; i++) {
-			new Thread(() -> add(strings)).start();
-		}
-
+		//Random random = new Random();
+		//String[] strings = new String[10];
+		//for (int i = 0; i < strings.length; i++) {
+		//	strings[i] = Arrays.toString(random.ints(15, 0, 10).toArray());
+		//}
+		//
+		//for (int i = 0; i < 10; i++) {
+		//	new Thread(() -> add(strings)).start();
+		//}
+		System.out.println(FileUtil.findNums(dir));
 	}
 
+	//  测试方法
 	private static void add(String[] strings) {
 		for (String s : strings) {
 			byte[] bytes = s.getBytes();
-			FileUtil.addTake(bytes);
+			FileUtil.addTake(bytes, 0, bytes.length);
+		}
+	}
+
+	//查询文件数量，打印输入错误信息的文件名
+	public static int findNums(String dir) throws IOException {
+		File file = new File(dir);
+		if (!file.isDirectory()) {
+			return -1;
+		}
+		String[] names = file.list();
+		File child;
+		assert names != null;
+
+		for (String name : names) {
+			int num = 0;
+			child = new File(dir, name);
+			BufferedReader br = new BufferedReader(new FileReader(child));
+			String s = br.readLine();
+			while (s != null) {
+				num++;
+				s = br.readLine();
+				if (s != null && s.length() != "好好学习tiantianxiangshang from:25485063612224".length()) {
+					System.out.println(name);
+					num = MsgSend.maxToNums;    //防止重复打印
+					break;
+				}
+			}
+			if (num != MsgSend.maxToNums)
+				System.out.println(name);
+		}
+		return names.length;
+	}
+
+	private static class Task {
+		byte[] data;
+		int offset;
+		int count;
+
+		/**
+		 * @param data   目标数组
+		 * @param offset 开始位置
+		 * @param count  偏移量
+		 */
+		Task(byte[] data, int offset, int count) {
+			this.data = data;
+			this.offset = offset;
+			this.count = count;
 		}
 	}
 }

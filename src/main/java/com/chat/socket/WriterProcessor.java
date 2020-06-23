@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @Author: czw
@@ -12,6 +13,7 @@ import java.util.Set;
  * @Description:
  */
 public class WriterProcessor implements Runnable {
+	static AtomicInteger integer = new AtomicInteger();
 	private Queue<SocketReader> outbound;
 	public static Map map = ReaderProcessor.map;
 	public WriterProcessor(Queue<SocketReader> queue) {
@@ -61,8 +63,12 @@ public class WriterProcessor implements Runnable {
 					String end = " from:" + socketReader.socketId;
 					toSocket.writeBuffer.put(end.getBytes());   //后缀必然小于header,不必校验cap
 					toSocket.writeBuffer.flip();
-					toSocket.sc.write(toSocket.writeBuffer);
+					int i = toSocket.sc.write(toSocket.writeBuffer);
+					assert i == bytes.length + end.getBytes().length;   //断言发送成功
+					integer.incrementAndGet();
 					toSocket.writeBuffer.clear();
+					System.out.println(new String(bytes) + end + " :sendSuccess  累计成功：" + integer.intValue());
+
 				}
 				temp = toClientIds.poll();
 				try {

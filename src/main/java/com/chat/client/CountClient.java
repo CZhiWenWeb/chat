@@ -8,9 +8,10 @@ import java.util.concurrent.CountDownLatch;
  * @CreateTime: 2020-06-17 16:51
  * @UpdeteTime: 2020-06-17 16:51
  * @Description:并发测试
+ * 群发消息数量应为 clientNum*maxToNum
  */
 public class CountClient extends Client {
-	static int NUMs = 50;
+	static int NUMs = 1;
 	static CountDownLatch count = new CountDownLatch(NUMs);
 
 	public CountClient(int port) throws IOException {

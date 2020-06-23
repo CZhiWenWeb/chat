@@ -1,9 +1,10 @@
 package com.chat.client;
 
+import com.chat.util.CodeUtil;
 import com.chat.util.FileUtil;
+import com.chat.util.IdFactory;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -43,7 +44,8 @@ public class MsgAcceptor implements Runnable {
 						byteBuffer.clear();
 						int len = bytes.length;
 						System.out.println(new String(bytes, len - 14, 14));
-						FileUtil.addTake(bytes);        //记录消息
+						msgHander(bytes);       //记录消息，粘包处理
+						//FileUtil.addTake(bytes,0,bytes.length);        //记录消息
 						//System.out.println(new String(bytes));
 					}
 					selectionKeys.clear();
@@ -51,13 +53,28 @@ public class MsgAcceptor implements Runnable {
 				Thread.sleep(1000);
 			} catch (IOException | InterruptedException e) {
 				e.printStackTrace();
+			} catch (Exception e) {
+				System.out.println("解码失败");
+				e.printStackTrace();
 			}
 		}
 	}
 
-	private void msgHander(byte[] bytes) {   //粘包处理
-		byte[] temp = "from:".getBytes(StandardCharsets.UTF_8);
-
+	private void msgHander(byte[] source) throws Exception {   //粘包处理
+		byte[] target = "from:".getBytes(StandardCharsets.UTF_8);
+		int len = target.length + IdFactory.IDLEN;
+		int lenSource = source.length;
+		int start = 0;
+		int count;
+		while (true) {
+			int index = CodeUtil.findBytesByBM(source, start, lenSource,
+					target, 0, target.length);
+			if (index == -1)
+				break;
+			count = CodeUtil.findBytesByBM(source, start, lenSource,
+					target, 0, target.length) + len;
+			FileUtil.addTake(source, start, count - start);
+			start = count;
+		}
 	}
-
 }

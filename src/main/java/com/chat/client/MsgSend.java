@@ -23,7 +23,7 @@ public class MsgSend implements Runnable {
 	private ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
 	private long id;
 	private RedisClientTool redisClientTool = new RedisClientTool();
-	private static int maxToNums = 5;
+	public static int maxToNums = 5;
 	public MsgSend(int port) throws IOException {
 		this.sc = SocketChannel.open();
 		this.address = new InetSocketAddress("127.0.0.1", port);
@@ -89,7 +89,7 @@ public class MsgSend implements Runnable {
 			i = write(message.getMsg(), start, len);
 		}
 
-		System.out.println("megLen:" + len + " write:" + start + i);
+		System.out.println("megLen:" + message.len() + " write:" + i);
 	}
 
 	private int write(byte[] bytes, int start, int len) throws IOException {
@@ -101,9 +101,10 @@ public class MsgSend implements Runnable {
 	}
 
 	private Message createMsg(String msg, String... to) throws Exception {
-
+		if (to.length < 1)
+			throw new Exception("至少一个收件人");
 		StringBuilder temp = new StringBuilder();
-		for (int i = 1; i < to.length; i++) {
+		for (int i = 1; i < to.length - 1; i++) {   //去头去尾
 			temp.append(to[i]).append('1');
 		}
 		if (to.length > 1)

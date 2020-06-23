@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @Author: czw
@@ -23,7 +24,8 @@ import java.util.Queue;
  * @Description:
  */
 public class SocketReader implements Closeable {
-	public static Map map = ReaderProcessor.map;
+	static AtomicInteger nums = new AtomicInteger();
+	public static Map<Long, SocketReader> map = ReaderProcessor.map;
 	public SocketChannel sc;
 	public ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
 	public ByteBuffer writeBuffer = ByteBuffer.allocate(1024);
@@ -31,6 +33,7 @@ public class SocketReader implements Closeable {
 	public long lastTime;
 	private Selector readSelector;
 	private int msgId = 0;
+	private static final int maxId = -1 >>> 12;     //2^(32-12)
 	private int msgLen = -1;    //消息剩余长度
 	private int nextIndex = 0;  //读取下个元素的指针位置
 	private int writeIndex = 0; //写入下个元素的指针位置
@@ -54,12 +57,15 @@ public class SocketReader implements Closeable {
 			Queue<Long> toIdsQue = new LinkedList<>();
 			byte[] bytes = new byte[byteBuffer.remaining()];
 			byteBuffer.get(bytes);
+			byteBuffer.clear();
 			if (new String(bytes).contains("login")) {
 				long id = Long.parseLong(new String(bytes, nextIndex, IdFactory.IDLEN));
 				map.putIfAbsent(id, this);
 				socketId = id;
 				redisClientTool.setAdd(Client.redisKey, String.valueOf(id));
-				System.out.println(id + ":get");
+
+				nums.incrementAndGet();
+				System.out.println(id + ":get   " + nums.intValue());
 				nextIndex = 0;
 				return i;
 			}
@@ -72,11 +78,20 @@ public class SocketReader implements Closeable {
 				return i;
 			}
 			if (msgLen > 0) {   //获取完整消息
-				msgLen -= i;
+				if (msgLen < i) {
+					i = msgLen;
+					msgLen = -1;
+				} else {
+					msgLen -= i;
+				}
 				System.arraycopy(bytes, 0, completeMsg, writeIndex, i);
 				writeIndex += i;
 				if (msgLen > 0)
 					return i;
+				for (int j = i; j < bytes.length; j++) {    //粘包处理
+					if (bytes[i] != 0)
+						byteBuffer.put(bytes[i]);
+				}
 			}
 			msgLen = completeMsg.length;    //获取完整消息长度
 			bytes = completeMsg;
@@ -97,8 +112,9 @@ public class SocketReader implements Closeable {
 			}
 			byte[] temp = new byte[msgLen - nextIndex];
 			System.arraycopy(bytes, nextIndex, temp, 0, msgLen - nextIndex);
-			msgMap.put(msgId, temp);  //存放msg
-			msgToIdsMap.put(msgId++, toIdsQue);   //需发送的ids
+			msgToIdsMap.put(msgId & maxId, toIdsQue);   //需发送的ids
+			msgMap.put(msgId & maxId, temp);  //存放msg
+			msgId++;
 			byteBuffer.clear();
 
 			reset();
