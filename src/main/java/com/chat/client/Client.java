@@ -10,12 +10,12 @@ import java.io.IOException;
  */
 public class Client implements Runnable {
 	public static String redisKey = "clientId";
-	private MsgAcceptor acceptor;
-	private MsgSend send;
+	private ClientAcceptor acceptor;
+	private ClientSend send;
 
 	public Client(int port) throws IOException {
-		send = new MsgSend(port);
-		acceptor = new MsgAcceptor(send.sc);
+		send = new ClientSend(port);
+		acceptor = new ClientAcceptor(send.sc);
 	}
 
 	@Override

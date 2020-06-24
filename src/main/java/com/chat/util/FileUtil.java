@@ -1,7 +1,7 @@
 package com.chat.util;
 
 
-import com.chat.client.MsgSend;
+import com.chat.client.ClientSend;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -185,11 +185,11 @@ public class FileUtil {
 				s = br.readLine();
 				if (s != null && s.length() != "好好学习tiantianxiangshang from:25485063612224".length()) {
 					System.out.println(name);
-					num = MsgSend.maxToNums;    //防止重复打印
+					num = ClientSend.maxToNums;    //防止重复打印
 					break;
 				}
 			}
-			if (num != MsgSend.maxToNums)
+			if (num != ClientSend.maxToNums)
 				System.out.println(name);
 		}
 		return names.length;

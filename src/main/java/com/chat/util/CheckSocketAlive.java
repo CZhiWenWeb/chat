@@ -2,12 +2,12 @@ package com.chat.util;
 
 import com.chat.cache.util.RedisClientTool;
 import com.chat.client.Client;
-import com.chat.socket.ReaderProcessor;
-import com.chat.socket.SocketReader;
+import com.chat.client.ClientAcceptor;
+import com.chat.socket.Server;
 
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -26,10 +26,11 @@ public class CheckSocketAlive implements Runnable {
 		Iterator it = set.iterator();
 		for (int i = 0; i < set.size(); i++)
 			strings[i] = (String) it.next();
-		clientTool.setDel(Client.redisKey, strings);
+		if (strings.length > 0)
+			clientTool.setDel(Client.redisKey, strings);
 	}
 
-	static Map<Long, SocketReader> map = ReaderProcessor.map;
+	ConcurrentMap map = Server.mapOnLine;
 	static ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
 
 	public static void start() {

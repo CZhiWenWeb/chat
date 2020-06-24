@@ -1,13 +1,15 @@
 package com.chat.socket;
 
+import com.chat.message.MessageAccept;
+
 import java.io.IOException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * @Author: czw
@@ -16,13 +18,13 @@ import java.util.Set;
  * @Description:
  */
 public class ReaderProcessor implements Runnable {
-	private Queue<SocketChannel> inboundSocket;
-	public Queue<SocketReader> outboundSocket;
+	private BlockingQueue<SocketChannel> inboundSocket;
+	public BlockingQueue outboundSocket;
 	private boolean stop;
 	private Selector readSelector;
 	public static Map map = new HashMap();
 
-	public ReaderProcessor(Queue<SocketChannel> queue, Queue<SocketReader> readerQueue) {
+	public ReaderProcessor(BlockingQueue<SocketChannel> queue, BlockingQueue readerQueue) {
 		this.inboundSocket = queue;
 		this.outboundSocket = readerQueue;
 	}
@@ -56,7 +58,7 @@ public class ReaderProcessor implements Runnable {
 		while (sc != null) {
 			sc.configureBlocking(false);
 			sc.register(readSelector, SelectionKey.OP_READ)
-					.attach(new SocketReader(sc, readSelector));
+					.attach(new MessageAccept(sc));
 			sc = inboundSocket.poll();
 		}
 
@@ -64,10 +66,10 @@ public class ReaderProcessor implements Runnable {
 		if (nums > 0) {
 			Set<SelectionKey> keys = readSelector.selectedKeys();
 			for (SelectionKey key : keys) {
-				SocketReader reader = (SocketReader) key.attachment();
-				reader.read();
+				MessageAccept accept = (MessageAccept) key.attachment();
+				accept.read();
 
-				outboundSocket.offer(reader);
+				outboundSocket.offer(accept);
 			}
 			keys.clear();
 		}

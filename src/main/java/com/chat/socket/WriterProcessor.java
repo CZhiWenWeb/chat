@@ -1,9 +1,20 @@
 package com.chat.socket;
 
+import com.chat.cache.util.RedisClientTool;
+import com.chat.client.Client;
+import com.chat.message.Message;
+import com.chat.message.MessageAccept;
+import com.chat.message.MessageSend;
+import com.chat.message.WriteTask;
+import com.chat.util.CodeUtil;
+import com.chat.util.IdFactory;
+
 import java.io.IOException;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
+import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -13,21 +24,31 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @Description:
  */
 public class WriterProcessor implements Runnable {
-	static AtomicInteger integer = new AtomicInteger();
-	private Queue<SocketReader> outbound;
-	public static Map map = ReaderProcessor.map;
-	public WriterProcessor(Queue<SocketReader> queue) {
+	static final String serverId;
+	static AtomicInteger integer;
+
+	static {
+		byte[] bytes = new byte[IdFactory.IDLEN];
+		for (int i = 0; i < IdFactory.IDLEN; i++)
+			bytes[i] = '0';
+		serverId = new String(bytes);
+		integer = new AtomicInteger();
+	}
+
+	private BlockingQueue outbound;    //热点域，使用LinkBlockingQue
+	private ConcurrentMap mapOnLine;        //所有writer线程的热点域，使用concurrentHashMap
+	private RedisClientTool tool = new RedisClientTool();
+
+	public WriterProcessor(BlockingQueue queue, ConcurrentMap onLine) {
 		outbound = queue;
+		mapOnLine = onLine;
+
 	}
 
 	@Override
 	public void run() {
 		while (true) {
-			try {
-				handlerMsg();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			handlerMsg();
 
 			try {
 				Thread.sleep(100);
@@ -37,50 +58,76 @@ public class WriterProcessor implements Runnable {
 		}
 	}
 
-	private void handlerMsg() throws IOException {
-		SocketReader socketReader = outbound.poll();
-		while (socketReader != null) {
-			sendMsg(socketReader);
-			//ByteBuffer byteBuffer = socketReader.byteBuffer;
-			//byteBuffer.put((socketReader.socketId + ":hello").getBytes());
-			//byteBuffer.flip();
-			//socketReader.sc.write(byteBuffer);
-			//byteBuffer.clear();
-			socketReader = outbound.poll();
-		}
-	}
-
-	private void sendMsg(SocketReader socketReader) throws IOException {
-		Set<Integer> msgIds = socketReader.msgMap.keySet();  //需发送的msg
-		for (Integer msgId : msgIds) {
-			Queue<Long> toClientIds = socketReader.msgToIdsMap.get(msgId);
-			Long temp = toClientIds.poll();
-			while (temp != null) {
-				SocketReader toSocket = (SocketReader) map.get(temp);
-				if (toSocket != null && toSocket.sc.isOpen()) {
-					byte[] bytes = socketReader.msgMap.get(msgId);
-					toSocket.writeBuffer.put(bytes);
-					String end = " from:" + socketReader.socketId;
-					toSocket.writeBuffer.put(end.getBytes());   //后缀必然小于header,不必校验cap
-					toSocket.writeBuffer.flip();
-					int i = toSocket.sc.write(toSocket.writeBuffer);
-					assert i == bytes.length + end.getBytes().length;   //断言发送成功
-					integer.incrementAndGet();
-					toSocket.writeBuffer.clear();
-					System.out.println(new String(bytes) + end + " :sendSuccess  累计成功：" + integer.intValue());
-
+	private void handlerMsg() {
+		MessageAccept accept = (MessageAccept) outbound.poll();
+		while (accept != null) {
+			WriteTask task = accept.tasks.poll();
+			List notEndTask = new ArrayList();
+			while (task != null) {
+				byte[] msg = task.msg;
+				if (isLogin(msg)) {
+					String loginId = new String(msg, Message.len, IdFactory.IDLEN);
+					mapOnLine.putIfAbsent(loginId, accept.sc);
+					Message message = new Message();
+					try {
+						message.initMsg(loginId + " 登入成功", serverId);
+						MessageSend send = new MessageSend(accept.sc);
+						send.sendMsg(message);  //发送登入通知
+						tool.setAdd(Client.redisKey, loginId);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				} else {
+					boolean sendEnd = false;
+					byte[] id = task.accIds.poll();
+					while (id != null) {
+						String accId = new String(id, 0, IdFactory.IDLEN);
+						SocketChannel sc = (SocketChannel) mapOnLine.get(accId);
+						if (sc != null && sc.isOpen()) {
+							MessageSend send = new MessageSend(sc);
+							try {
+								Message message = new Message();
+								message.initMsgWithOutAccIds(msg);
+								send.sendMsg(message);      //发送消息
+								integer.incrementAndGet();
+								System.out.println("发送成功：" + integer.intValue() + "内容：" + new String(msg));
+							} catch (IOException e) {
+								System.out.println("MessageSend sendMsg error");
+								e.printStackTrace();
+							} catch (Exception e) {
+								System.out.println("Message initMsgWithOutAccIds error");
+								e.printStackTrace();
+							}
+						}
+						if (id[IdFactory.IDLEN] == '0') {
+							sendEnd = true;
+						}
+						id = task.accIds.poll();
+					}
+					if (!sendEnd) {
+						notEndTask.add(task);//还有其他ids需要接收msg，重新放入队列，等待ids到来
+					}
 				}
-				temp = toClientIds.poll();
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+				task = accept.tasks.poll();
 			}
-			socketReader.msgToIdsMap.clear();
+			for (Object writeTask : notEndTask) {      //重新插入
+				accept.tasks.offer((WriteTask) writeTask);
+			}
+			notEndTask.clear();
+			accept = (MessageAccept) outbound.poll();
 		}
-		msgIds.clear();
 	}
 
-
+	private boolean isLogin(byte[] bytes) {
+		byte[] login = "login".getBytes();
+		int i = 0;
+		try {
+			i = CodeUtil.findBytesByBM(bytes, Message.startIndex, login.length,
+					login, 0, login.length);
+		} catch (Exception e) {
+			System.out.println("CodeUtil findBytesByBM error");
+			e.printStackTrace();
+		}
+		return i != -1;
+	}
 }

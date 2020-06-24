@@ -10,14 +10,12 @@ import java.nio.charset.StandardCharsets;
  */
 public class CodeUtil {
 
-	public static int binaryStringToInt(String s) throws Exception {
-		byte[] chars = s.getBytes();
+	public static int bytesToInt(byte[] bytes, int offset, int count) throws Exception {
 		int result = 0;
-		int len = chars.length;
-		for (int i = 0; i < len; i++) {
-			if (chars[i] == '1') {
-				result = result | (1 << (len - i - 1));
-			} else if (chars[i] != 0 && chars[i] != '0') {  //0为空位；'0'字符0；使用byte[]数组生成的string会带上空位字符
+		for (int i = 0; i < count; i++) {
+			if (bytes[i + offset] == '1') {
+				result = result | (1 << (count - i - 1));
+			} else if (bytes[i + offset] != 0 && bytes[i + offset] != '0') {  //0为空位；'0'字符0；byte[]默认填充空位字符
 				throw new Exception("错误的二进制格式");
 			}
 		}
@@ -27,7 +25,7 @@ public class CodeUtil {
 	/**
 	 * @param source  原byte[]
 	 * @param offset  开始查询的位置
-	 * @param len     结束位置，左闭又开
+	 * @param len     需要查询的位数
 	 * @param target  目标byte[]
 	 * @param offsetT 开始查询位置
 	 * @param countT  需要查询的位数
@@ -45,7 +43,7 @@ public class CodeUtil {
 			right[target[i]] = i + 1;       //right[index]-1为index在target中的最右下标
 
 		int skip;
-		for (int i = offset; i <= len - countT; i += skip) {
+		for (int i = offset; i <= offset + len - countT; i += skip) {
 			skip = 0;
 			for (int j = offsetT + countT - 1; j >= offsetT; j--) {
 				if (source[i + j - offsetT] != target[j]) {
@@ -67,14 +65,15 @@ public class CodeUtil {
 	}
 
 	public static void main(String[] args) throws Exception {
-		int i = CodeUtil.binaryStringToInt("001101");
+		int i = CodeUtil.bytesToInt("001101".getBytes(), 0, "001101".getBytes().length);
 		byte[] b = "from:".getBytes();
 		byte[] a = data.getBytes(StandardCharsets.UTF_8);
 		int index = 0;
 		int start = 0;
+		int len = a.length;
 		byte[] bytes;
 		while (index != -1) {
-			index = findBytesByBM(a, start, a.length,
+			index = findBytesByBM(a, start, len,
 					b, 0, b.length);
 			//System.out.println((char) a[index]);
 			//bytes = new byte[index + IdFactory.IDLEN + b.length];
@@ -83,6 +82,7 @@ public class CodeUtil {
 			//System.out.println(new String(bytes));
 			System.out.println("index:" + index);
 			start = index + IdFactory.IDLEN + b.length;
+			len = a.length - start;
 			System.out.println("start:" + start);
 		}
 	}

@@ -2,7 +2,7 @@ package com.chat.socket;
 
 import com.chat.cache.util.RedisClientTool;
 import com.chat.client.Client;
-import com.chat.client.Message;
+import com.chat.message.Message;
 import com.chat.util.CodeUtil;
 import com.chat.util.IdFactory;
 
@@ -70,7 +70,7 @@ public class SocketReader implements Closeable {
 				return i;
 			}
 			if (msgLen == -1) {
-				msgLen = CodeUtil.binaryStringToInt(new String(bytes, nextIndex, Message.len)); //获取消息长度
+				//msgLen = CodeUtil.bytesToInt(new String(bytes, nextIndex, Message.len)); //获取消息长度
 				completeMsg = new byte[msgLen];
 				msgLen -= i;
 				System.arraycopy(bytes, 0, completeMsg, writeIndex, i);

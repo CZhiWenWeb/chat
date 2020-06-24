@@ -1,9 +1,6 @@
 package com.chat.socket;
 
-import java.util.Queue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.*;
 
 /**
  * @Author: czw
@@ -19,8 +16,8 @@ public class Server implements Runnable {
 	private SocketAccepter accepter;
 	//private ReaderProcessor reader;
 	//private WriterProcessor writerProcessor;
-	private Queue<SocketReader> readerQueue = new LinkedBlockingQueue<>();      //线程安全的写消息队列
-
+	private BlockingQueue readerQueue = new LinkedBlockingQueue<>();      //线程安全的写消息队列
+	public static ConcurrentMap mapOnLine = new ConcurrentHashMap();
 	public Server(int port) {
 		this.accepter = new SocketAccepter(port);
 		//this.reader = new ReaderProcessor(accepter.socketQue, readerQueue);
@@ -36,7 +33,7 @@ public class Server implements Runnable {
 			esReader.submit(new ReaderProcessor(accepter.socketQue, readerQueue));
 		}
 		for (int i = 0; i < writeNums; i++) {
-			esWriter.submit(new WriterProcessor(readerQueue));
+			esWriter.submit(new WriterProcessor(readerQueue, mapOnLine));
 		}
 		//
 		//new Thread(reader).start();

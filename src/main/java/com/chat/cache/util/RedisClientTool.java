@@ -44,9 +44,11 @@ public class RedisClientTool implements ICacheTool {
 
 	@Override
 	public long setDel(String key, String... value) {
+		if (value == null)
+			return 0;
 		long n = jedis.srem(key, value);
 		jedis.close();
-		return 0;
+		return n;
 	}
 
 	@Override
