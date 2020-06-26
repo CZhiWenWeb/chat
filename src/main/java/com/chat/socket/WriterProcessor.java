@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class WriterProcessor implements Runnable {
 	static final String serverId;
-	static AtomicInteger integer;
+	public static AtomicInteger integer;
 
 	static {
 		byte[] bytes = new byte[IdFactory.IDLEN];

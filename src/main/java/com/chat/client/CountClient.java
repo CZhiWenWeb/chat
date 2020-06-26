@@ -7,12 +7,11 @@ import java.util.concurrent.CountDownLatch;
  * @Author: czw
  * @CreateTime: 2020-06-17 16:51
  * @UpdeteTime: 2020-06-17 16:51
- * @Description:并发测试
- * 群发消息数量应为 clientNum*maxToNum
+ * @Description:并发测试 群发消息数量应为 clientNum*maxToNum
  * 总消息数量为   clientNum*maxToNum  +  clientNum
  */
 public class CountClient extends Client {
-	static int NUMs = 500;
+	static int NUMs = 2000;
 	static CountDownLatch count = new CountDownLatch(NUMs);
 
 	public CountClient(int port) throws IOException {

@@ -9,7 +9,9 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.channels.SocketChannel;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -25,6 +27,7 @@ public class ClientSend implements Runnable {
 	private MessageSend msgSend;
 	private RedisClientTool redisClientTool = new RedisClientTool();
 	public static int maxToNums = 50;
+
 	public ClientSend(int port) throws IOException {
 		this.sc = SocketChannel.open();
 		this.address = new InetSocketAddress("127.0.0.1", port);
@@ -51,11 +54,6 @@ public class ClientSend implements Runnable {
 
 			sendToMany();
 
-			//while (true) {
-			//	Thread.sleep(new Random().nextInt(10) * 1000 +
-			//			1000);
-			//}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -74,13 +72,14 @@ public class ClientSend implements Runnable {
 
 	private void sendToMany() throws Exception {
 		String msg = "好好学习tiantianxiangshang";
-
+		Random random = new Random();
 		Set set = redisClientTool.getAllValues(Client.redisKey);
-		Iterator it = set.iterator();
+		Object[] objects = set.toArray();
 		int nums = set.size() > maxToNums ? maxToNums : set.size();
 		String[] strings = new String[nums];  //发送的ids
-		for (int i = 0; i < nums; i++)
-			strings[i] = (String) it.next();
+		for (int i = 0; i < nums; i++) {
+			strings[i] = (String) objects[random.nextInt(nums)];        //客户端未做消息队列，同一账号大量接受会消息丢失
+		}
 		Message message = new Message();
 		message.initMsg(msg, String.valueOf(id), strings);
 		msgSend.sendMsg(message);

@@ -6,6 +6,7 @@ import com.chat.client.ClientSend;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -37,6 +38,7 @@ public class FileUtil {
 		}
 		dir = file.getPath();
 	}
+
 	private static int cap = 1024;
 	private static ByteBuffer byteBuffer;
 	private static BlockingQueue<Task> takeQue = new LinkedBlockingQueue<>(1000);
@@ -54,7 +56,7 @@ public class FileUtil {
 				new Thread(() -> {
 					try {
 						processor();
-					} catch (IOException | InterruptedException e) {
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}).start();
@@ -62,7 +64,7 @@ public class FileUtil {
 		}
 	}
 
-	private static void processor() throws IOException, InterruptedException {
+	private static void processor() throws Exception {
 		while (open) {
 			Task task = takeQue.poll();
 			while (task != null) {
@@ -75,8 +77,13 @@ public class FileUtil {
 		System.out.println("end: " + takeQue.size());
 	}
 
-	private static void writeToFile(byte[] bytes, int offset, int count) throws IOException {
-		String name = new String(bytes, offset + count - IdFactory.IDLEN, IdFactory.IDLEN);
+	private static void writeToFile(byte[] bytes, int offset, int count) throws Exception {
+		String name;
+
+		//name = new String(bytes, offset, IdFactory.IDLEN);   //以消息前缀命名
+
+		name = new String(bytes, offset + count - IdFactory.IDLEN, IdFactory.IDLEN);     //以消息后缀命名
+
 		System.out.println("writing: " + name);
 		if (mapChannel.containsKey(name)) {
 			if (mapChannel.get(name).isOpen()) {
@@ -137,7 +144,9 @@ public class FileUtil {
 
 	private static FileChannel openChannel(String name) {
 		try {
-			return new FileOutputStream(new File(dir, name + type), true).getChannel();
+			File file = new File(dir, name + type);
+
+			return new FileOutputStream(file, true).getChannel();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}

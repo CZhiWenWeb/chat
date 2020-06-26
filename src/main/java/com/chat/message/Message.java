@@ -70,6 +70,7 @@ public class Message {
 		String binaryLen = Integer.toBinaryString(len);
 		byte[] byteLen = binaryLen.getBytes();
 		System.arraycopy(byteLen, 0, datas, bytes.length + (len - byteLen.length), byteLen.length);
+		isComplete = true;
 	}
 
 	public byte[] getMsg() {
