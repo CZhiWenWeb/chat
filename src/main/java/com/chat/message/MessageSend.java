@@ -1,5 +1,7 @@
 package com.chat.message;
 
+import com.chat.cache.BufferBlock;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
@@ -20,26 +22,19 @@ public class MessageSend {
 		byteBuffer = ByteBuffer.allocate(cap);
 	}
 
-	public void sendMsg(byte[] bytes) throws IOException {
-		int len = bytes.length;   //需要发送的数量
-		int start = 0;          //偏移量
-		int sendNum = 0;        //成功发送的数量
-		while (len > sendNum) {
-			len -= sendNum;
-			if (len > cap)
-				byteBuffer.put(bytes, start, cap);
-			else
-				byteBuffer.put(bytes, start, len);
+	public void sendMsg(Message msg) throws IOException {
+		sendMsg(msg.getMsg());
+	}
+
+	public void sendMsg(BufferBlock bufferBlock) throws IOException {
+		while (bufferBlock.readCap() > 0) {
+			int num = cap > bufferBlock.readCap() ? bufferBlock.readCap() : cap;
+			byteBuffer.put(bufferBlock.bytes, bufferBlock.readOff, num);
 			byteBuffer.flip();
 			int i = sc.write(byteBuffer);
 			byteBuffer.clear();
-			start += i;
-			sendNum = i;
+			bufferBlock.readOff += i;
 		}
-	}
-
-	public void sendMsg(Message msg) throws IOException {
-		sendMsg(msg.getMsg());
 	}
 
 }

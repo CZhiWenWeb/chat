@@ -11,7 +11,7 @@ import java.util.concurrent.CountDownLatch;
  * 总消息数量为   clientNum*maxToNum  +  clientNum
  */
 public class CountClient extends Client {
-	static int NUMs = 2000;
+	static int NUMs = 500;
 	static CountDownLatch count = new CountDownLatch(NUMs);
 
 	public CountClient(int port) throws IOException {

@@ -22,7 +22,6 @@ public class ReaderProcessor implements Runnable {
 	public BlockingQueue outboundSocket;
 	private boolean stop;
 	private Selector readSelector;
-	public static Map map = new HashMap();
 
 	public ReaderProcessor(BlockingQueue<SocketChannel> queue, BlockingQueue readerQueue) {
 		this.inboundSocket = queue;

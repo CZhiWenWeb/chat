@@ -1,5 +1,7 @@
 package com.chat.message;
 
+import com.chat.cache.BufferBlock;
+import com.chat.cache.BufferRing;
 import com.chat.util.IdFactory;
 
 import java.nio.charset.StandardCharsets;
@@ -16,7 +18,8 @@ import java.nio.charset.StandardCharsets;
  * sendId为发件人，body为信息，acceptorId为空
  */
 public class Message {
-	private byte[] datas;
+	private static BufferRing bufferRing = BufferRing.getInstance();
+	private BufferBlock datas;
 	public static int len = 10;
 	private static int id = IdFactory.IDLEN;
 	public static int startIndex = len + id;
@@ -25,7 +28,7 @@ public class Message {
 	/**
 	 * @param body
 	 * @param send
-	 * @param to   to数组不能有元素为空(String[] ex=new String[5];   ex有五个元素为空)
+	 * @param to   to数组不能有元素为空(String[] ex=new String[5];   ex有五个元素为空)且to[i].len=ID.len
 	 * @throws Exception
 	 */
 	public void initMsg(String body, String send, String... to) throws Exception {
@@ -40,23 +43,21 @@ public class Message {
 		int lengthA = to.length * (IdFactory.IDLEN) + len;
 		if (lengthA > ((1 << len) - 1))
 			throw new Exception("to过长");
-		datas = new byte[startIndex + bodyLen +     //头部+body需要的内存
-				lengthA];    //接收Id需要的内存
 
-		//System.arraycopy(msg.getBytes(StandardCharsets.UTF_8), 0, datas, startIndex, bodyLen);
+		datas = bufferRing.dispatcher(startIndex + bodyLen +    //头部+body需要的内存
+				lengthA);   //接收Id需要的内存
+
 		byte[] header = (binaryLenB + send).getBytes(StandardCharsets.UTF_8);
-		System.arraycopy(header, 0, datas, startIndex - header.length, header.length);      //头部写入
+		datas.readFromBytes(header, startIndex - header.length);      //头部写入
 
-		System.arraycopy(body.getBytes(StandardCharsets.UTF_8), 0, datas, startIndex, bodyLen);     //body写入
+		datas.readFromBytes(body.getBytes(StandardCharsets.UTF_8));          //body写入
 
 		String binaryLenA = Integer.toBinaryString(lengthA);
 		byte[] byteLenA = binaryLenA.getBytes(StandardCharsets.UTF_8);
-		int next = body.getBytes().length + startIndex;
-		System.arraycopy(byteLenA, 0, datas, next + (len - byteLenA.length), byteLenA.length);
-		next += len;
+		datas.readFromBytes(byteLenA, len - byteLenA.length);
+
 		for (String s : to) {
-			System.arraycopy(s.getBytes(StandardCharsets.UTF_8), 0, datas, next, IdFactory.IDLEN);
-			next += IdFactory.IDLEN;
+			datas.readFromBytes(s.getBytes(StandardCharsets.UTF_8));
 		}
 		isComplete = true;
 	}
@@ -65,20 +66,16 @@ public class Message {
 		if (isComplete) {
 			throw new Exception("禁止重复初始化");
 		}
-		datas = new byte[bytes.length + len];
-		System.arraycopy(bytes, 0, datas, 0, bytes.length);
+		datas = bufferRing.dispatcher(bytes.length + len);
+		datas.readFromBytes(bytes);
 		String binaryLen = Integer.toBinaryString(len);
 		byte[] byteLen = binaryLen.getBytes();
-		System.arraycopy(byteLen, 0, datas, bytes.length + (len - byteLen.length), byteLen.length);
+		datas.readFromBytes(byteLen, len - binaryLen.length());
 		isComplete = true;
 	}
 
-	public byte[] getMsg() {
+	public BufferBlock getMsg() {
 		return datas;
-	}
-
-	public int len() {
-		return datas.length;
 	}
 
 	public static void main(String[] args) {

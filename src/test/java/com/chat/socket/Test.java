@@ -1,8 +1,6 @@
 package com.chat.socket;
 
-import com.chat.client.CountClient;
-
-import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * @Author: czw
@@ -11,11 +9,35 @@ import java.io.IOException;
  * @Description:
  */
 public class Test {
+	static CountDownLatch count = new CountDownLatch(5);
 
-	@org.junit.Test
-	public void test() throws IOException {
-		Server server = new Server(12346);
-		CountClient.test();
+	public static void main(String[] args) {
+		Runnable runnable = () -> {
+			try {
+				count.await();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			System.out.println(A.getInstance());
+		};
 
+		for (int i = 0; i < 5; i++) {
+			new Thread(runnable).start();
+			count.countDown();
+		}
+	}
+}
+
+class A {
+	private A() {
+		System.out.println("init");
+	}
+
+	static A getInstance() {
+		return Holder.a;
+	}
+
+	static class Holder {
+		static A a = new A();
 	}
 }
