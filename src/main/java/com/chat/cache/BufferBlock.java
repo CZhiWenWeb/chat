@@ -12,8 +12,9 @@ public class BufferBlock {
 	public int count;       //剩余可写空间
 	public int readOff;     //读指针位置
 	public boolean alive;   //是否继续存活,标记为false后随时可能被覆盖，不能继续使用
-	private int start;
-	private int cap;
+	private int readMark;   //标记当前readOff所在位置
+	public int age;        //经历GC次数
+
 	public BufferBlock(byte[] bytes, int offset, int count) {
 
 		this.bytes = bytes;
@@ -21,8 +22,7 @@ public class BufferBlock {
 		this.count = count;
 		this.alive = true;
 		this.readOff = offset;
-		this.start = offset;
-		this.cap = count;
+		this.age = 0;
 		BufferRing.bufferBlockQue.offer(this);  //将所有bufferBlock实例传入que,this虽然没有构建完成但没影响
 	}
 
@@ -30,8 +30,10 @@ public class BufferBlock {
 		if (readCap() != newBB.count)
 			throw new Exception("复制失败");
 		System.arraycopy(bytes, readOff, newBB.bytes, newBB.offset, readCap());
+		this.age++;     //每次存活年龄++
 		newBB.offset += offset - readOff;
 		newBB.alive = this.alive;
+		newBB.age = this.age;
 		this.clear();
 	}
 
@@ -81,6 +83,7 @@ public class BufferBlock {
 			throw new Exception("bufferBlock writeOut error");
 		return bytes[index];
 	}
+
 	/**
 	 * @return 剩余可读
 	 */
@@ -94,9 +97,15 @@ public class BufferBlock {
 		return new String(bytes, offset, count);
 	}
 
+	public void markReadOff() {
+		this.readMark = this.readOff;
+	}
+
+	public void rollBack() {
+		this.readOff = this.readMark;
+	}
+
 	public void clear() {
 		this.alive = false;
-		//for (int j = 0; j < cap; j++)
-		//	bytes[j + start] = 0;
 	}
 }

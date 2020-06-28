@@ -28,6 +28,7 @@ public class WriterProcessor implements Runnable {
 	static final String serverId;
 	public static AtomicInteger integer;
 	static final byte[] serverIdBytes;
+
 	static {
 		byte[] bytes = new byte[IdFactory.IDLEN];
 		for (int i = 0; i < IdFactory.IDLEN; i++)
@@ -41,6 +42,7 @@ public class WriterProcessor implements Runnable {
 	private ConcurrentMap mapOnLine;        //所有writer线程的热点域，使用concurrentHashMap
 	private RedisClientTool tool = new RedisClientTool();
 	static BufferRing bufferRing = BufferRing.getInstance();
+
 	public WriterProcessor(BlockingQueue queue, ConcurrentMap onLine) {
 		outbound = queue;
 		mapOnLine = onLine;
@@ -90,14 +92,15 @@ public class WriterProcessor implements Runnable {
 						if (sc != null && sc.isOpen()) {
 							MessageSend send = new MessageSend(sc);
 							BufferBlock outMsg = bufferRing.dispatcher(msg.readCap() + Message.len);
-							outMsg.readFromOther(msg, msg.readCap());
-							msg.clear();
-							outMsg.readFromBytes(serverIdBytes);
+							copyMsg(msg, outMsg, msg.readCap());  //复制msg内容至outMsg
+							outMsg.readFromBytes(serverIdBytes);    //为outMsg添加后缀，使其成为合法消息
+							String data = outMsg.toString(outMsg.readOff, outMsg.readCap());
 							send.sendMsg(outMsg);
-							System.out.println("成功发送数量：" + integer.incrementAndGet() + "内容" + outMsg.toString(outMsg.readOff, outMsg.readCap()));
+							System.out.println("成功发送数量：" + integer.incrementAndGet() + "内容:  " + data);
 						}
-						if (id.writeOut(id.readOff + IdFactory.IDLEN) == '0') {
+						if (id.writeOut(id.readOff + IdFactory.IDLEN) == '0') {     //已对有所ids完成msg发送
 							sendEnd = true;
+							msg.clear();
 						}
 						if (!sendEnd) {
 							notEndTask.add(task);
@@ -128,4 +131,15 @@ public class WriterProcessor implements Runnable {
 		return i != -1;
 	}
 
+	/**
+	 * @param source
+	 * @param target
+	 * @param count
+	 * @throws Exception 复制source的内容，不移动source的readOff指针
+	 */
+	private void copyMsg(BufferBlock source, BufferBlock target, int count) throws Exception {
+		source.markReadOff();
+		target.readFromOther(source, count);
+		source.rollBack();
+	}
 }

@@ -15,6 +15,7 @@ public class BufferRing {
 	private final static int MB = KB * 1024;
 	private final static double percent = 0.5;
 	private static int capacity = 100 * KB;
+	static final int maxAges = 4;      //最多经历ags次GC
 	private byte[] primary = new byte[(int) (capacity * percent)];
 	private byte[] surviorF = new byte[(int) (capacity * (1 - percent))];
 	//private byte[] surviorS = new byte[surviorF.length];
@@ -43,6 +44,9 @@ public class BufferRing {
 			bufferBlockQue = new LinkedBlockingQueue();
 			BufferBlock bufferBlock = (BufferBlock) oldQue.poll();
 			while (bufferBlock != null) {
+				if (bufferBlock.age > maxAges) {
+					bufferBlock.clear();    //超过次数强制GC
+				}
 				if (bufferBlock.alive) {
 					try {
 						temp += bufferBlock.readCap();
