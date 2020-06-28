@@ -2,38 +2,31 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6891a754-6afa-41db-b26f-5598d053298e" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/chat/cache/BufferBlock.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/chat/message/NewWriteTask.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/chat/socket/TT.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__junit_junit_4_12.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__junit_junit_4_12.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__log4j_log4j_1_2_17.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__log4j_log4j_1_2_17.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_pool2_2_6_2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_pool2_2_6_2.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_hamcrest_hamcrest_core_1_3.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_hamcrest_hamcrest_core_1_3.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_slf4j_api_1_7_30.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_slf4j_api_1_7_30.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_slf4j_log4j12_1_7_30.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_slf4j_log4j12_1_7_30.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__redis_clients_jedis_3_3_0.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__redis_clients_jedis_3_3_0.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/chat/message/Message.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/chat/message/NewWriteTask.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/test-classes/com/chat/socket/TT.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chat.iml" beforeDir="false" afterPath="$PROJECT_DIR$/chat.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/chat/cache/BufferBlock.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/chat/cache/BufferBlock.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/chat/cache/BufferRing.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/chat/cache/BufferRing.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/chat/client/CountClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/chat/client/CountClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/chat/client/ClientAcceptor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/chat/client/ClientAcceptor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/chat/client/ClientSend.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/chat/client/ClientSend.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/chat/message/Message.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/chat/message/Message.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/chat/message/MessageAccept.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/chat/message/MessageAccept.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/chat/message/MessageSend.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/chat/message/MessageSend.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/chat/socket/ReaderProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/chat/socket/ReaderProcessor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/chat/socket/SocketReader.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/chat/message/ParseMsgFromServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/chat/message/ParseMsgFromServer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/chat/socket/WriterProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/chat/socket/WriterProcessor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/chat/socket/Test.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/chat/socket/Test.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/chat/cache/BufferBlock.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/chat/cache/BufferBlock.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/chat/cache/BufferRing$Holder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/chat/cache/BufferRing$Holder.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/chat/cache/BufferRing$MessageBuffer.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/chat/cache/BufferRing$MessageBuffer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/chat/cache/BufferRing.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/chat/cache/BufferRing.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/chat/client/ClientAcceptor.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/chat/client/ClientAcceptor.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/chat/client/ClientSend.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/chat/client/ClientSend.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/chat/client/CountClient.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/chat/client/CountClient.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/chat/message/Message.class" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/chat/message/MessageAccept.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/chat/message/MessageAccept.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/chat/message/MessageSend.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/chat/message/MessageSend.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/chat/message/ParseMsgFromServer.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/chat/message/ParseMsgFromServer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/chat/socket/ReaderProcessor.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/chat/socket/ReaderProcessor.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/chat/socket/SocketReader.class" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/chat/socket/WriterProcessor.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/chat/socket/WriterProcessor.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/test-classes/com/chat/socket/A.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/test-classes/com/chat/socket/A.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/test-classes/com/chat/socket/B.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/test-classes/com/chat/socket/ServerTest.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/test-classes/com/chat/socket/ThreadNumTest$Run.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/test-classes/com/chat/socket/ThreadNumTest.class" beforeDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -65,64 +58,10 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/message/MessageSend.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/cache/BufferRing.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="420">
-              <caret line="25" column="30" selection-start-line="25" selection-start-column="30" selection-end-line="25" selection-end-column="30" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/socket/ReaderProcessor.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="260">
-              <caret line="22" column="25" lean-forward="true" selection-start-line="22" selection-start-column="25" selection-end-line="22" selection-end-column="25" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/socket/Server.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="340">
-              <caret line="17" column="46" lean-forward="true" selection-start-line="17" selection-start-column="46" selection-end-line="17" selection-end-column="46" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/socket/SocketAccepter.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="154">
-              <caret line="43" column="27" lean-forward="true" selection-start-line="43" selection-start-column="27" selection-end-line="43" selection-end-column="27" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/socket/WriterProcessor.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="320">
-              <caret line="62" column="16" lean-forward="true" selection-start-line="62" selection-start-column="16" selection-end-line="62" selection-end-column="16" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/cache/BufferBlock.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-622">
-              <caret line="17" column="29" lean-forward="true" selection-start-line="17" selection-start-column="29" selection-end-line="17" selection-end-column="29" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/message/NewWriteTask.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="18" column="25" selection-start-line="18" selection-start-column="25" selection-end-line="18" selection-end-column="25" />
+            <state relative-caret-position="79">
+              <caret line="69" selection-start-line="69" selection-end-line="69" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -131,14 +70,25 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/message/ParseMsgFromServer.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/message/MessageAccept.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="397">
-              <caret line="21" column="32" selection-start-line="21" selection-start-column="32" selection-end-line="21" selection-end-column="32" />
+            <state relative-caret-position="241">
+              <caret line="98" selection-start-line="98" selection-end-line="98" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#670#671#0" expanded="true" />
-                <element signature="e#717#718#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/cache/BufferBlock.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="189">
+              <caret line="37" column="45" lean-forward="true" selection-start-line="37" selection-start-column="45" selection-end-line="37" selection-end-column="45" />
+              <folding>
+                <element signature="e#2492#2493#0" expanded="true" />
+                <element signature="e#2522#2523#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -154,13 +104,62 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/message/MessageAccept.java">
+        <entry file="jar://C:/Program Files/Java/jdk1.8.0_201/src.zip!/java/io/PrintStream.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="320">
-              <caret line="51" column="59" selection-start-line="51" selection-start-column="59" selection-end-line="51" selection-end-column="59" />
+            <state relative-caret-position="189">
+              <caret line="325" selection-start-line="325" selection-end-line="325" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/socket/SocketAccepter.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="385">
+              <caret line="60" column="5" selection-start-line="60" selection-start-column="5" selection-end-line="60" selection-end-column="5" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/client/CountClient.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="300">
+              <caret line="16" column="53" selection-start-line="16" selection-start-column="53" selection-end-line="16" selection-end-column="53" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="jar://C:/Program Files/Java/jdk1.8.0_201/src.zip!/java/nio/Buffer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="6040">
+              <caret line="331" selection-start-line="331" selection-end-line="331" />
+              <folding>
+                <element signature="e#12171#12172#0" expanded="true" />
+                <element signature="e#12210#12211#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/socket/WriterProcessor.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="381">
+              <caret line="96" column="16" selection-start-line="96" selection-start-column="16" selection-end-line="96" selection-end-column="16" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/message/MessageSend.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="182">
+              <caret line="28" column="16" selection-start-line="28" selection-start-column="16" selection-end-line="28" selection-end-column="16" />
             </state>
           </provider>
         </entry>
@@ -181,6 +180,15 @@
       <find>bufferBlock.offset - bufferBlock.readOff</find>
       <find>readBuffer.put(bufferBlock.bytes, bufferBlock.readOff, bufferBlock.readCap());</find>
       <find>sb</find>
+      <find>alive = false</find>
+      <find>解码失败</find>
+      <find>return null;</find>
+      <find>bufferBlock.clear()</find>
+      <find>gc</find>
+      <find>init</find>
+      <find>serverId</find>
+      <find>内容</find>
+      <find>GC</find>
     </findStrings>
     <replaceStrings>
       <replace>bufferBlock.readCap()</replace>
@@ -194,16 +202,21 @@
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/test/java/com/chat/socket/Test.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/chat/client/CountClient.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/chat/message/NewWriteTask.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/chat/cache/BufferRing.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/chat/message/MessageAccept.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/chat/cache/BufferBlock.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/chat/message/Message.java" />
         <option value="$PROJECT_DIR$/src/test/java/com/chat/socket/TT.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/chat/message/MessageSend.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/chat/socket/ReaderProcessor.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/chat/message/ParseMsgFromServer.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/chat/message/MessageSend.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/chat/client/ClientSend.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/chat/socket/Server.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/chat/socket/SocketAccepter.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/chat/client/CountClient.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/chat/cache/BufferBlock.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/chat/message/MessageAccept.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/chat/message/Message.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/chat/client/ClientAcceptor.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/chat/socket/WriterProcessor.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/chat/cache/BufferRing.java" />
       </list>
     </option>
   </component>
@@ -218,10 +231,10 @@
   </component>
   <component name="PhpDebugGeneral" listening_started="true" />
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="214" />
-    <option name="y" value="42" />
+    <option name="x" value="253" />
+    <option name="y" value="41" />
     <option name="width" value="1355" />
-    <option name="height" value="1010" />
+    <option name="height" value="1011" />
   </component>
   <component name="ProjectId" id="1doIMRIInUgrfSjOYJO0sHY4pm9" />
   <component name="ProjectView">
@@ -420,6 +433,14 @@
               <item name="&lt; 1.8 &gt;" type="70bed36:NamedLibraryElementNode" />
               <item name="rt.jar" type="462c0819:PsiDirectoryNode" />
               <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="io" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="chat" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; 1.8 &gt;" type="70bed36:NamedLibraryElementNode" />
+              <item name="rt.jar" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="lang" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -450,7 +471,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../myrepository" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -573,6 +594,7 @@
       <workItem from="1592881208497" duration="45781000" />
       <workItem from="1593084972000" duration="5967000" />
       <workItem from="1593167279280" duration="6068000" />
+      <workItem from="1593334295516" duration="2135000" />
     </task>
     <task id="LOCAL-00001" summary="11">
       <created>1591608812798</created>
@@ -651,7 +673,14 @@
       <option name="project" value="LOCAL" />
       <updated>1592644454297</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="22s">
+      <created>1593249660007</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1593249660007</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -687,13 +716,12 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="25578000" />
+    <option name="totallyTimeSpent" value="53213000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4934555" visible="true" weight="0.1609808" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4934555" visible="true" weight="0.15031983" />
       <window_info id="Structure" order="1" sideWeight="0.50654453" side_tool="true" weight="0.1609808" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -702,7 +730,7 @@
       <window_info id="Favorites" order="6" sideWeight="0.50654453" side_tool="true" weight="0.1609808" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.28169015" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.60455036" />
       <window_info anchor="bottom" id="Cvs" order="3" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="4" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="5" />
@@ -710,9 +738,9 @@
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.32936078" />
       <window_info anchor="bottom" id="Database Changes" order="8" />
       <window_info anchor="bottom" id="Terminal" order="9" weight="0.19393283" />
-      <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info anchor="bottom" id="Messages" order="11" visible="true" weight="0.21343446" />
-      <window_info anchor="bottom" id="Debug" order="12" weight="0.17226435" />
+      <window_info anchor="bottom" id="Messages" order="10" weight="0.19609967" />
+      <window_info anchor="bottom" id="Debug" order="11" sideWeight="0.49946696" visible="true" weight="0.3575298" />
+      <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.50053304" side_tool="true" weight="0.55146265" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="1" weight="0.29317698" />
       <window_info anchor="right" id="Palette" order="2" />
@@ -722,7 +750,7 @@
       <window_info anchor="right" id="Capture Analysis" order="6" />
       <window_info anchor="right" id="Palette&#9;" order="7" />
       <window_info anchor="right" id="Ant Build" order="8" weight="0.045380875" />
-      <window_info anchor="right" id="Coverage" order="9" side_tool="true" weight="0.32972974" />
+      <window_info anchor="right" id="Coverage" order="9" side_tool="true" weight="0.32942432" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -782,27 +810,112 @@
     <SUITE FILE_PATH="coverage/chat$Message.ic" NAME="Message Coverage Results" MODIFIED="1592552309202" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
       <FILTER>com.chat.client.*</FILTER>
     </SUITE>
-    <SUITE FILE_PATH="coverage/chat$Server.ic" NAME="Server Coverage Results" MODIFIED="1592982142715" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+    <SUITE FILE_PATH="coverage/chat$Server.ic" NAME="Server Coverage Results" MODIFIED="1593326989154" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
       <FILTER>com.chat.message.*</FILTER>
     </SUITE>
   </component>
   <component name="debuggerHistoryManager">
+    <expressions id="breakpointCondition">
+      <expression>
+        <expression-string>i==344</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>i=344</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>i&gt;344</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>i</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>temp&gt;20000||bufferBlockQue.size()==1</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>temp&gt;2000</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>temp&gt;40000</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>temp&gt;4000</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>((LinkedList) bufferBlockQue).size==20</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>((LinkedList) bufferBlockQue).size==1</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+    </expressions>
     <expressions id="evaluateExpression">
       <expression>
-        <expression-string>16&gt;&gt;3</expression-string>
+        <expression-string>outMsg.toString(outMsg.readOff,outMsg.readCap())</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>taskBf.toString(taskBf.readOff,taskBf.readCap())</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>queue.poll()</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>tasks.poll()</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>bufferBlock.toString(bufferBlock.readOff,bufferBlock.readCap())</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>((NewWriteTask) ((LinkedList) tasks).get(0)).msg.toString()</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>((LinkedList) tasks).get(0)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>new String(msg.bytes,msg.readOff,msg.readCap())</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>msg.toString(msg.readOff,msg.readCap())</expression-string>
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/client/Client.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="18" column="5" selection-start-line="18" selection-start-column="5" selection-end-line="18" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/util/FileUtil.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2820">
@@ -813,47 +926,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="454">
-          <caret line="34" column="36" lean-forward="true" selection-start-line="34" selection-start-column="36" selection-end-line="34" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_201/src.zip!/java/util/Queue.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="202">
           <caret line="198" column="6" selection-start-line="198" selection-start-column="6" selection-end-line="198" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/client/ClientSend.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="600">
-          <caret line="42" column="33" selection-start-line="42" selection-start-column="33" selection-end-line="42" selection-end-column="33" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/client/ClientAcceptor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="600">
-          <caret line="39" column="80" selection-start-line="39" selection-start-column="80" selection-end-line="39" selection-end-column="80" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/cache/util/RedisClientTool.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="20" selection-start-line="20" selection-end-line="20" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -864,41 +940,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/client/CountClient.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="380">
-          <caret line="19" selection-start-line="19" selection-end-line="19" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/util/CheckSocketAlive.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="280">
           <caret line="24" column="50" selection-start-line="24" selection-start-column="50" selection-end-line="24" selection-end-column="50" />
           <folding>
             <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/util/CodeUtil.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="213">
-          <caret line="12" column="25" selection-start-line="12" selection-start-column="25" selection-end-line="12" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/cache/BufferRing.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="329">
-          <caret line="43" column="105" selection-start-line="43" selection-start-column="105" selection-end-line="43" selection-end-column="105" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#831#832#0" expanded="true" />
-            <element signature="e#2554#2555#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -952,22 +999,25 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/message/Message.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/socket/SocketReader.java" />
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_201/src.zip!/java/lang/String.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-166">
-          <caret line="50" column="13" selection-start-line="50" selection-start-column="13" selection-end-line="50" selection-end-column="13" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#2785#2786#0" expanded="true" />
-            <element signature="e#2804#2805#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="406">
+          <caret line="378" column="45" selection-start-line="378" selection-start-column="45" selection-end-line="378" selection-end-column="45" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/message/NewWriteTask.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/client/Client.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="360">
-          <caret line="18" column="25" selection-start-line="18" selection-start-column="25" selection-end-line="18" selection-end-column="25" />
+          <caret line="18" column="5" selection-start-line="18" selection-start-column="5" selection-end-line="18" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/cache/util/RedisClientTool.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="220">
+          <caret line="20" selection-start-line="20" selection-end-line="20" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -976,8 +1026,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/message/ParseMsgFromServer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="397">
-          <caret line="21" column="32" selection-start-line="21" selection-start-column="32" selection-end-line="21" selection-end-column="32" />
+        <state relative-caret-position="434">
+          <caret line="31" column="46" selection-start-line="31" selection-start-column="46" selection-end-line="31" selection-end-column="46" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#670#671#0" expanded="true" />
@@ -986,52 +1036,133 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/message/MessageSend.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/socket/Server.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="25" column="30" selection-start-line="25" selection-start-column="30" selection-end-line="25" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/socket/SocketReader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="20">
-          <caret line="25" column="13" selection-start-line="25" selection-start-column="13" selection-end-line="25" selection-end-column="13" />
+        <state relative-caret-position="-117">
+          <caret line="16" column="31" lean-forward="true" selection-start-line="16" selection-start-column="31" selection-end-line="16" selection-end-column="31" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/socket/ReaderProcessor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="22" column="25" lean-forward="true" selection-start-line="22" selection-start-column="25" selection-end-line="22" selection-end-column="25" />
+        <state relative-caret-position="403">
+          <caret line="63" column="44" lean-forward="true" selection-start-line="63" selection-start-column="44" selection-end-line="63" selection-end-column="44" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/socket/Server.java">
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_201/src.zip!/java/lang/Thread.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2">
+          <caret line="747" selection-start-line="747" selection-end-line="747" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_201/src.zip!/java/lang/StringBuilder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="144">
+          <caret line="207" selection-start-line="207" selection-end-line="207" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/message/Message.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="380">
+          <caret line="60" column="68" lean-forward="true" selection-start-line="60" selection-start-column="68" selection-end-line="60" selection-end-column="68" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/client/ClientAcceptor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="42" column="46" lean-forward="true" selection-start-line="42" selection-start-column="46" selection-end-line="42" selection-end-column="46" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_201/src.zip!/java/nio/HeapByteBuffer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="167">
+          <caret line="130" selection-start-line="130" selection-end-line="130" />
+          <folding>
+            <element signature="e#2393#2394#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/client/ClientSend.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1200">
+          <caret line="72" column="48" selection-start-line="72" selection-start-column="48" selection-end-line="72" selection-end-column="48" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/util/CodeUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="420">
+          <caret line="21" selection-start-line="21" selection-end-line="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/message/NewWriteTask.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="340">
-          <caret line="17" column="46" lean-forward="true" selection-start-line="17" selection-start-column="46" selection-end-line="17" selection-end-column="46" />
+          <caret line="19" selection-start-line="19" selection-end-line="19" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/socket/SocketAccepter.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/client/CountClient.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="154">
-          <caret line="43" column="27" lean-forward="true" selection-start-line="43" selection-start-column="27" selection-end-line="43" selection-end-column="27" />
+        <state relative-caret-position="300">
+          <caret line="16" column="53" selection-start-line="16" selection-start-column="53" selection-end-line="16" selection-end-column="53" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_201/src.zip!/java/lang/String.java">
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_201/src.zip!/java/nio/Buffer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="406">
-          <caret line="378" column="45" selection-start-line="378" selection-start-column="45" selection-end-line="378" selection-end-column="45" />
+        <state relative-caret-position="6040">
+          <caret line="331" selection-start-line="331" selection-end-line="331" />
+          <folding>
+            <element signature="e#12171#12172#0" expanded="true" />
+            <element signature="e#12210#12211#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/cache/BufferBlock.java">
+    <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-622">
-          <caret line="17" column="29" lean-forward="true" selection-start-line="17" selection-start-column="29" selection-end-line="17" selection-end-column="29" />
+        <state relative-caret-position="680">
+          <caret line="34" column="36" lean-forward="true" selection-start-line="34" selection-start-column="36" selection-end-line="34" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_201/src.zip!/java/io/PrintStream.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="189">
+          <caret line="325" selection-start-line="325" selection-end-line="325" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/cache/BufferRing.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="79">
+          <caret line="69" selection-start-line="69" selection-end-line="69" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1042,10 +1173,35 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/socket/SocketAccepter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="385">
+          <caret line="60" column="5" selection-start-line="60" selection-start-column="5" selection-end-line="60" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/message/MessageSend.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="182">
+          <caret line="28" column="16" selection-start-line="28" selection-start-column="16" selection-end-line="28" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/cache/BufferBlock.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="189">
+          <caret line="37" column="45" lean-forward="true" selection-start-line="37" selection-start-column="45" selection-end-line="37" selection-end-column="45" />
+          <folding>
+            <element signature="e#2492#2493#0" expanded="true" />
+            <element signature="e#2522#2523#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/message/MessageAccept.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="320">
-          <caret line="51" column="59" selection-start-line="51" selection-start-column="59" selection-end-line="51" selection-end-column="59" />
+        <state relative-caret-position="241">
+          <caret line="98" selection-start-line="98" selection-end-line="98" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -1054,8 +1210,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/chat/socket/WriterProcessor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="320">
-          <caret line="62" column="16" lean-forward="true" selection-start-line="62" selection-start-column="16" selection-end-line="62" selection-end-column="16" />
+        <state relative-caret-position="381">
+          <caret line="96" column="16" selection-start-line="96" selection-start-column="16" selection-end-line="96" selection-end-column="16" />
         </state>
       </provider>
     </entry>

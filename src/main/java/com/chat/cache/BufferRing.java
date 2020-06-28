@@ -1,7 +1,8 @@
 package com.chat.cache;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @Author: czw
@@ -12,16 +13,17 @@ import java.util.Queue;
 public class BufferRing {
 	private final static int KB = 1024;
 	private final static int MB = KB * 1024;
-	private final static double percent = 0.8;
-	private static int capacity = 10 * MB;
+	private final static double percent = 0.5;
+	private static int capacity = 100 * KB;
 	private byte[] primary = new byte[(int) (capacity * percent)];
-	private byte[] surviorF = new byte[(int) (capacity * (1 - percent) / 2)];
-	private byte[] surviorS = new byte[surviorF.length];
-	public static Queue bufferBlockQue = new LinkedList();
+	private byte[] surviorF = new byte[(int) (capacity * (1 - percent))];
+	//private byte[] surviorS = new byte[surviorF.length];
+	public static BlockingQueue bufferBlockQue = new LinkedBlockingQueue();
+
 	public MessageBuffer primaryBf;
 	public MessageBuffer surviorFBf;
-	public MessageBuffer surviorSBf;
-	public boolean isF;     //空闲内存标记
+	//public MessageBuffer surviorSBf;
+	public volatile boolean isF = true;     //空闲内存标记
 
 	public static BufferRing getInstance() {
 		return Holder.bufferRing;
@@ -30,46 +32,48 @@ public class BufferRing {
 	private BufferRing() {
 		this.primaryBf = new MessageBuffer(primary);
 		this.surviorFBf = new MessageBuffer(surviorF);
-		this.surviorSBf = new MessageBuffer(surviorS);
+		//this.surviorSBf = new MessageBuffer(surviorS);
 	}
 
-	public synchronized BufferBlock dispatcher(int count) {
+	public synchronized BufferBlock dispatcher(int count) throws Exception {
 		if (isGC(count)) {
-			MessageBuffer survior = isF ? surviorFBf : surviorSBf;  //isF为true时有效数据复制至surviorFBf
-			int num = bufferBlockQue.size();
-			while (num > 0) {
-				BufferBlock bufferBlock = (BufferBlock) bufferBlockQue.poll();
-				if (bufferBlock != null && bufferBlock.alive) {
+			int temp = 0;
+			MessageBuffer survior = isF ? surviorFBf : primaryBf;  //isF为true时有效数据复制至surviorFBf
+			BlockingQueue oldQue = bufferBlockQue;
+			bufferBlockQue = new LinkedBlockingQueue();
+			BufferBlock bufferBlock = (BufferBlock) oldQue.poll();
+			while (bufferBlock != null) {
+				if (bufferBlock.alive) {
 					try {
-						BufferBlock newBB = survior.dispatcher(bufferBlock.offset - bufferBlock.readOff);
+						temp += bufferBlock.readCap();
+						BufferBlock newBB = survior.dispatcher(bufferBlock.readCap());
 						bufferBlock.copyTo(newBB);
 					} catch (Exception e) {
+						System.out.println("分配失败");
 						e.printStackTrace();
 					}
 				}
-				num--;
+				bufferBlock = (BufferBlock) oldQue.poll();
 			}
-			primaryBf.reset();
 			if (isF) {
-				surviorSBf.reset();
+				primaryBf.reset();
 			} else {
 				surviorFBf.reset();
 			}
 			isF = !isF;
-			System.out.println("GC成功");
+			System.out.println("GC成功:" + temp + "存活");
 			return dispatcher(count);
-		} else {
-			try {
-				return primaryBf.dispatcher(count);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 		}
-		return null;
+		if (isF) {
+			return primaryBf.dispatcher(count);
+		} else {
+			return surviorFBf.dispatcher(count);
+		}
 	}
 
 	private boolean isGC(int count) {
-		if (primaryBf.capacity - primaryBf.writePos < count) {
+		MessageBuffer buffer = isF ? primaryBf : surviorFBf;
+		if (buffer.capacity.intValue() - buffer.writePos.intValue() < count) {
 			return true;
 		}
 		return false;
@@ -77,27 +81,28 @@ public class BufferRing {
 
 	class MessageBuffer {
 		byte[] bytes;   //连续内存
-		int capacity;   //最大可用内存
-		int writePos;   //写指针位置
+		AtomicInteger capacity;   //最大可用内存
+		AtomicInteger writePos;   //写指针位置
 
 		public MessageBuffer(byte[] bytes) {
 			this.bytes = bytes;
-			this.capacity = bytes.length;
-			this.writePos = 0;
+			this.capacity = new AtomicInteger(bytes.length);
+			this.writePos = new AtomicInteger(0);
 		}
 
 		public BufferBlock dispatcher(int count) throws Exception {
-			if (capacity - writePos > count) {
-				BufferBlock bufferBlock = new BufferBlock(bytes, writePos, count);
-				writePos += count;
+			if (capacity.intValue() - writePos.intValue() > count) {
+				BufferBlock bufferBlock = new BufferBlock(bytes, writePos.intValue(), count);
+				writePos.getAndAdd(count);
 				return bufferBlock;
 			} else {
+				System.out.println(this.writePos);
 				throw new Exception("内存不足");
 			}
 		}
 
 		public void reset() {
-			writePos = 0;
+			writePos.set(0);
 		}
 	}
 
@@ -105,13 +110,13 @@ public class BufferRing {
 		static BufferRing bufferRing = new BufferRing();
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		int cap = 500;
 		BufferRing.capacity = 10 * KB;
 		BufferRing bufferRing = new BufferRing();
 		bufferRing.dispatcher(cap);
 		for (int i = 0; i < 17; i++) {
-			bufferRing.dispatcher(cap).alive = false;
+			bufferRing.dispatcher(cap).clear();
 		}
 	}
 }

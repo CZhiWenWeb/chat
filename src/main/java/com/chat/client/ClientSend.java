@@ -26,7 +26,7 @@ public class ClientSend implements Runnable {
 	private long id;
 	private MessageSend msgSend;
 	private RedisClientTool redisClientTool = new RedisClientTool();
-	public static int maxToNums = 50;
+	public static int maxToNums = 20;
 
 	public ClientSend(int port) throws IOException {
 		this.sc = SocketChannel.open();

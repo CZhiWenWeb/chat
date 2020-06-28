@@ -48,29 +48,18 @@ public class Message {
 				lengthA);   //接收Id需要的内存
 
 		byte[] header = (binaryLenB + send).getBytes(StandardCharsets.UTF_8);
-		datas.readFromBytes(header, startIndex - header.length);      //头部写入
-
+		byte[] zeroBeforeH = fillZero(startIndex - header.length);
+		datas.readFromBytes(zeroBeforeH);   //头部长度不足填充0
+		datas.readFromBytes(header);      //头部写入
 		datas.readFromBytes(body.getBytes(StandardCharsets.UTF_8));          //body写入
-
 		String binaryLenA = Integer.toBinaryString(lengthA);
 		byte[] byteLenA = binaryLenA.getBytes(StandardCharsets.UTF_8);
-		datas.readFromBytes(byteLenA, len - byteLenA.length);
-
+		byte[] zeroBeforeA = fillZero(len - byteLenA.length);
+		datas.readFromBytes(zeroBeforeA);   //头部长度不足填充0
+		datas.readFromBytes(byteLenA);   //len写入
 		for (String s : to) {
 			datas.readFromBytes(s.getBytes(StandardCharsets.UTF_8));
 		}
-		isComplete = true;
-	}
-
-	public void initMsgWithOutAccIds(byte[] bytes) throws Exception {
-		if (isComplete) {
-			throw new Exception("禁止重复初始化");
-		}
-		datas = bufferRing.dispatcher(bytes.length + len);
-		datas.readFromBytes(bytes);
-		String binaryLen = Integer.toBinaryString(len);
-		byte[] byteLen = binaryLen.getBytes();
-		datas.readFromBytes(byteLen, len - binaryLen.length());
 		isComplete = true;
 	}
 
@@ -78,6 +67,12 @@ public class Message {
 		return datas;
 	}
 
+	private byte[] fillZero(int len) {
+		byte[] bytes = new byte[len];
+		for (int i = 0; i < len; i++)
+			bytes[i] = '0';
+		return bytes;
+	}
 	public static void main(String[] args) {
 		byte[] bytes = new byte[2];
 		System.out.println();

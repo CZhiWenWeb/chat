@@ -35,6 +35,7 @@ public class MessageSend {
 			byteBuffer.clear();
 			bufferBlock.readOff += i;
 		}
+		bufferBlock.clear();
 	}
 
 }

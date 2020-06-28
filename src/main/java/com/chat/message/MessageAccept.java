@@ -21,10 +21,10 @@ public class MessageAccept {
 	public SocketChannel sc;
 	private ByteBuffer readBuffer = ByteBuffer.allocate(MessageSend.cap);
 
-	private BufferBlock completeMsg;
-	private Queue queue;
+	private BufferBlock completeMsg;    //header+body
+	private Queue queue;                //accIds
 	public Queue tasks = new LinkedList<>();
-	private BufferRing bufferRing = BufferRing.getInstance();
+	static BufferRing bufferRing = BufferRing.getInstance();
 	private int accLen = -1;
 	public MessageAccept(SocketChannel sc) {
 		this.sc = sc;
@@ -32,13 +32,13 @@ public class MessageAccept {
 
 	public int read() throws Exception {
 		int i = sc.read(readBuffer);
-		readBuffer.flip();
 		if (i > 0) {
+			readBuffer.flip();
 			System.out.println(i);
 
 			BufferBlock bufferBlock = bufferRing.dispatcher(readBuffer.remaining());
 
-			readBuffer.get(bufferBlock.bytes, bufferBlock.offset, bufferBlock.count);   //写入bb
+			readBuffer.get(bufferBlock.bytes, bufferBlock.offset, bufferBlock.count);
 			bufferBlock.offset += bufferBlock.count;
 			bufferBlock.count = 0;
 			readBuffer.clear();
@@ -49,7 +49,10 @@ public class MessageAccept {
 	}
 
 	private void handlerBytes(BufferBlock bufferBlock) throws Exception {
-		//handlerBytes(bufferBlock.bytes, bufferBlock.offset, bufferBlock.count);
+		if (bufferBlock.readCap() <= 0) {
+			bufferBlock.clear();
+			return;
+		}
 		if (completeMsg == null) {      //生成新消息
 			if (bufferBlock.readCap() < Message.len) {      //不足解析消息长度，回写，数据用尽，并标记bb可回收
 				writeBlack(bufferBlock);
@@ -71,13 +74,11 @@ public class MessageAccept {
 			}
 		} else {
 			completeMsg.readFromOther(bufferBlock, bufferBlock.readCap());
-			bufferBlock.alive = false;      //bufferBlock读尽，标记可回收
+			bufferBlock.clear();     //bufferBlock读尽，标记可回收
 		}
 	}
 
 	private void parseAcceptIds(BufferBlock bufferBlock) throws Exception {
-		if (bufferBlock.readCap() <= 0)
-			return;
 		if (accLen == -1 && bufferBlock.readCap() < Message.len) {
 			writeBlack(bufferBlock);
 		} else {
@@ -98,6 +99,7 @@ public class MessageAccept {
 							reset();
 							handlerBytes(bufferBlock);  //粘包处理
 						} else {
+							taskBf.read((byte) '1');
 							parseAcceptIds(bufferBlock);
 						}
 					} else {    //长度不足获取id
@@ -118,7 +120,11 @@ public class MessageAccept {
 	}
 
 	private void writeBlack(BufferBlock bufferBlock) {
+		if (bufferBlock.readCap() <= 0) {
+			bufferBlock.clear();
+			return;
+		}
 		readBuffer.put(bufferBlock.bytes, bufferBlock.readOff, bufferBlock.readCap());
-		bufferBlock.alive = false;
+		bufferBlock.clear();
 	}
 }

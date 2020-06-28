@@ -1,8 +1,8 @@
 package com.chat.client;
 
 import com.chat.message.MessageAccept;
+import com.chat.message.NewWriteTask;
 import com.chat.message.ParseMsgFromServer;
-import com.chat.message.WriteTask;
 
 import java.io.IOException;
 import java.nio.channels.SelectionKey;
@@ -39,13 +39,13 @@ public class ClientAcceptor implements Runnable {
 					for (SelectionKey key : selectionKeys) {
 						MessageAccept accept = (MessageAccept) key.attachment();
 						accept.read();
-						WriteTask task = accept.tasks.poll();
+						NewWriteTask task = (NewWriteTask) accept.tasks.poll();
 						while (task != null) {
-							integer.incrementAndGet();
+							System.out.println("累计接收信息：" + integer.incrementAndGet());
 							ParseMsgFromServer.printMsg(task.msg);  //消息打印
-							System.out.println("累计接收信息：" + integer);
 							//ParseMsgFromServer.writeToFile(task.msg);   //消息存储
-							task = accept.tasks.poll();
+							task.msg.clear();
+							task = (NewWriteTask) accept.tasks.poll();
 						}
 					}
 					selectionKeys.clear();
@@ -54,7 +54,7 @@ public class ClientAcceptor implements Runnable {
 			} catch (IOException | InterruptedException e) {
 				e.printStackTrace();
 			} catch (Exception e) {
-				System.out.println("解码失败");
+				System.out.println("MessageAccept read 解码失败");
 				e.printStackTrace();
 			}
 		}
