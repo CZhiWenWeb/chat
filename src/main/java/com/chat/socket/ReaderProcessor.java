@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 
@@ -68,7 +66,7 @@ public class ReaderProcessor implements Runnable {
 				MessageAccept accept = (MessageAccept) key.attachment();
 				accept.read();
 
-				outboundSocket.offer(accept);
+				outboundSocket.offer(accept);   //每次读取完成都向写线程提供一个accept，一个accept每次read后都会重新入列，所以会出现多个写线程同时处理一个accept实例
 			}
 			keys.clear();
 		}

@@ -24,16 +24,16 @@ public class ParseMsgFromServer {
 		}
 	}
 
-	public static void printMsg(BufferBlock bufferBlock) {
+	public static String printMsg(BufferBlock bufferBlock) {
 		try {
 			int len = CodeUtil.bytesToInt(bufferBlock.bytes, bufferBlock.readOff, Message.len);
 			String from = bufferBlock.toString(bufferBlock.readOff + Message.len, IdFactory.IDLEN);
 			String msg = bufferBlock.toString(bufferBlock.readOff + Message.startIndex, len - Message.startIndex);
-			System.out.println(msg + ":from" + from);
+			return msg + ":from" + from;
 		} catch (Exception e) {
 			e.printStackTrace();
+			return null;
 		}
-
 	}
 
 	public static void writeToFile(byte[] bytes) {

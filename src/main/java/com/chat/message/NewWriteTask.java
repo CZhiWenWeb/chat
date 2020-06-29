@@ -17,5 +17,7 @@ public class NewWriteTask {
 	public NewWriteTask(BufferBlock msg, Queue queue) {
 		this.msg = msg;
 		this.ids = queue;
+		if (msg.count > 54 || msg.readCap() > 54)
+			System.out.println("msg异常");
 	}
 }

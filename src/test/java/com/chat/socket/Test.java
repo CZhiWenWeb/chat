@@ -11,33 +11,20 @@ import java.util.concurrent.CountDownLatch;
 public class Test {
 	static CountDownLatch count = new CountDownLatch(5);
 
-	public static void main(String[] args) {
-		Runnable runnable = () -> {
-			try {
-				count.await();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			System.out.println(A.getInstance());
-		};
-
-		for (int i = 0; i < 5; i++) {
-			new Thread(runnable).start();
-			count.countDown();
-		}
+	public static void main(String[] args) throws InterruptedException {
+		A a=new A();
+		a.hhh();
+		new Thread(()->a.ddd()).start();
+		//a.ddd();
 	}
 }
 
 class A {
-	private A() {
-		System.out.println("init");
+	public synchronized void ddd() {
+		System.out.println("ddd");
 	}
 
-	static A getInstance() {
-		return Holder.a;
-	}
-
-	static class Holder {
-		static A a = new A();
+	public synchronized void hhh() throws InterruptedException {
+		Thread.sleep(5000);
 	}
 }

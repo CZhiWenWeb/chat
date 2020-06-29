@@ -14,8 +14,8 @@ public class BufferRing {
 	private final static int KB = 1024;
 	private final static int MB = KB * 1024;
 	private final static double percent = 0.5;
-	private static int capacity = 100 * KB;
-	static final int maxAges = 4;      //最多经历ags次GC
+	private static int capacity = 150 * KB;
+	static final int maxAges = 2;      //最多经历ags次GC
 	private byte[] primary = new byte[(int) (capacity * percent)];
 	private byte[] surviorF = new byte[(int) (capacity * (1 - percent))];
 	//private byte[] surviorS = new byte[surviorF.length];
@@ -39,6 +39,7 @@ public class BufferRing {
 	public synchronized BufferBlock dispatcher(int count) throws Exception {
 		if (isGC(count)) {
 			int temp = 0;
+			int beforced = 0;
 			MessageBuffer survior = isF ? surviorFBf : primaryBf;  //isF为true时有效数据复制至surviorFBf
 			BlockingQueue oldQue = bufferBlockQue;
 			bufferBlockQue = new LinkedBlockingQueue();
@@ -46,12 +47,14 @@ public class BufferRing {
 			while (bufferBlock != null) {
 				if (bufferBlock.age > maxAges) {
 					bufferBlock.clear();    //超过次数强制GC
+					beforced += bufferBlock.readCap();
+					System.out.println(bufferBlock.toString() + "强制age:" + bufferBlock.age);
 				}
 				if (bufferBlock.alive) {
 					try {
 						temp += bufferBlock.readCap();
 						BufferBlock newBB = survior.dispatcher(bufferBlock.readCap());
-						bufferBlock.copyTo(newBB);
+						bufferBlock.copyTo(newBB);  //复制之后原引用地址指向新的byte[],newBB.alive=false,因为有对象指向原引用地址
 					} catch (Exception e) {
 						System.out.println("分配失败");
 						e.printStackTrace();
@@ -65,7 +68,7 @@ public class BufferRing {
 				surviorFBf.reset();
 			}
 			isF = !isF;
-			System.out.println("GC成功:" + temp + "存活");
+			System.out.println("GC成功:" + temp + "存活" + "  强制GC数量：" + beforced);
 			return dispatcher(count);
 		}
 		if (isF) {
@@ -100,8 +103,7 @@ public class BufferRing {
 				writePos.getAndAdd(count);
 				return bufferBlock;
 			} else {
-				System.out.println(this.writePos);
-				throw new Exception("内存不足");
+				throw new Exception("内存不足：剩余" + (capacity.intValue() - writePos.intValue()));
 			}
 		}
 

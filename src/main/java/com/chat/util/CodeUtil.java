@@ -1,5 +1,7 @@
 package com.chat.util;
 
+import com.chat.message.Message;
+
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -22,6 +24,27 @@ public class CodeUtil {
 		return result;
 	}
 
+	/**
+	 * @param i 目标int
+	 * @return 空位补'0'
+	 */
+	public static byte[] intToBinaryBytes(int i) throws Exception {
+		int index = Integer.numberOfLeadingZeros(i);
+		int len = 32 - index;
+		if (len == 0 || 32 - index > Message.len)
+			throw new Exception("Message长度i不合编码规则");
+		byte[] bytes = new byte[Message.len];
+		for (int j = 0; j < Message.len - len; j++)
+			bytes[j] = '0';
+		for (int j = Message.len - len; j < Message.len; j++) {
+			if ((i & (1 << (Message.len - j - 1))) == 0) {
+				bytes[j] = '0';
+			} else {
+				bytes[j] = '1';
+			}
+		}
+		return bytes;
+	}
 	/**
 	 * @param source  原byte[]
 	 * @param offset  开始查询的位置
@@ -65,6 +88,7 @@ public class CodeUtil {
 	}
 
 	public static void main(String[] args) throws Exception {
+		byte[] bbb = intToBinaryBytes(10);
 		int i = CodeUtil.bytesToInt("001101".getBytes(), 0, "001101".getBytes().length);
 		byte[] b = "from:".getBytes();
 		byte[] a = data.getBytes(StandardCharsets.UTF_8);

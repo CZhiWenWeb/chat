@@ -41,8 +41,8 @@ public class ClientAcceptor implements Runnable {
 						accept.read();
 						NewWriteTask task = (NewWriteTask) accept.tasks.poll();
 						while (task != null) {
-							System.out.println("累计接收信息：" + integer.incrementAndGet());
-							ParseMsgFromServer.printMsg(task.msg);  //消息打印
+							System.out.println("累计接收信息：" + integer.incrementAndGet() + "内容：" + ParseMsgFromServer.printMsg(task.msg));	  //消息打印
+
 							//ParseMsgFromServer.writeToFile(task.msg);   //消息存储
 							task.msg.clear();
 							task = (NewWriteTask) accept.tasks.poll();

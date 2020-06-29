@@ -9,6 +9,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * @Author: czw
@@ -23,7 +25,7 @@ public class MessageAccept {
 
 	private BufferBlock completeMsg;    //header+body
 	private Queue queue;                //accIds
-	public Queue tasks = new LinkedList<>();
+	public BlockingQueue tasks = new LinkedBlockingQueue();       //热点域，使用线程安全的que
 	static BufferRing bufferRing = BufferRing.getInstance();
 	private int accLen = -1;
 	public MessageAccept(SocketChannel sc) {
