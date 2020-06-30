@@ -13,9 +13,17 @@ public class Test {
 
 	public static void main(String[] args) throws InterruptedException {
 		A a=new A();
-		a.hhh();
-		new Thread(()->a.ddd()).start();
-		//a.ddd();
+		new Thread(() -> {
+			try {
+				a.hhh();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}).start();
+		Thread.sleep(100);
+		synchronized (a) {
+			a.ddd();
+		}
 	}
 }
 

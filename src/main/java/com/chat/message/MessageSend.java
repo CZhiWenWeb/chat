@@ -1,6 +1,6 @@
 package com.chat.message;
 
-import com.chat.cache.BufferBlock;
+import com.chat.cache.BufferBlockProxy;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -26,16 +26,16 @@ public class MessageSend {
 		sendMsg(msg.getMsg());
 	}
 
-	public void sendMsg(BufferBlock bufferBlock) throws IOException {
-		while (bufferBlock.readCap() > 0) {
-			int num = cap > bufferBlock.readCap() ? bufferBlock.readCap() : cap;
-			byteBuffer.put(bufferBlock.bytes, bufferBlock.readOff, num);
+	public void sendMsg(BufferBlockProxy proxy) throws IOException {
+		while (proxy.readCap() > 0) {
+			int num = cap > proxy.readCap() ? proxy.readCap() : cap;
+			proxy.writeToBuffer(byteBuffer, num);
 			byteBuffer.flip();
 			int i = sc.write(byteBuffer);
 			byteBuffer.clear();
-			bufferBlock.readOff += i;
+			proxy.readOffLeftShift(num - i);    //发送数据小于读取数据，重新发送
 		}
-		bufferBlock.clear();
+		proxy.clear();
 	}
 
 }

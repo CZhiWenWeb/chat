@@ -1,7 +1,8 @@
 package com.chat.socket;
 
-import com.chat.cache.BufferBlock;
+import com.chat.cache.BufferBlockProxy;
 import com.chat.cache.BufferRing;
+import com.chat.cache.NewBufferBlock;
 import com.chat.cache.util.RedisClientTool;
 import com.chat.client.Client;
 import com.chat.message.Message;
@@ -76,9 +77,9 @@ public class WriterProcessor implements Runnable {
 			NewWriteTask task = (NewWriteTask) accept.tasks.poll(); //同一时间task只会被单个线程持有
 			List notEndTask = new ArrayList();
 			while (task != null) {
-				//BufferBlock msg = task.msg;     //msg会被当前线程和内存回收线程同时操作
 				if (isLogin(task.msg)) {
-					String loginId = task.msg.toString(task.msg.getReadOff() + Message.len, IdFactory.IDLEN);
+					task.msg.readOffRightShift(Message.len);    //忽略长度解析
+					String loginId = task.msg.toString(IdFactory.IDLEN);
 					task.msg.clear();
 					mapOnLine.putIfAbsent(loginId, accept.sc);
 					Message message = new Message();
@@ -88,22 +89,25 @@ public class WriterProcessor implements Runnable {
 					tool.setAdd(Client.redisKey, loginId);
 				} else if (task.msg.isAlive()) {
 					boolean sendEnd = false;
-					BufferBlock id = task.ids.poll();
+					BufferBlockProxy id = task.ids.poll();
 					while (id != null) {
-						String accId = id.toString(id.getReadOff(), IdFactory.IDLEN);
-
+						String accId = id.toString(IdFactory.IDLEN);
 						SocketChannel sc = (SocketChannel) mapOnLine.get(accId);
 						if (sc != null && sc.isOpen()) {
 							MessageSend send = new MessageSend(sc);
-							BufferBlock outMsg = bufferRing.dispatcher(task.msg.readCap() + Message.len);
-							copyMsg(task.msg, outMsg, task.msg.readCap());  //复制msg内容至outMsg
-							outMsg.readFromBytes(serverIdBytes);    //为outMsg添加后缀，使其成为合法消息
-							String data = outMsg.toString(outMsg.readOff, outMsg.readCap());
-							int age = task.msg.age;
+							NewBufferBlock bufferBlock = bufferRing.dispatcher(task.msg.readCap() + Message.len);
+							BufferBlockProxy outMsg = bufferBlock.proxy;
+							int readCap = task.msg.readCap();
+							task.msg.writeToOther(outMsg, readCap); //复制msg内容至outMsg
+							task.msg.readOffLeftShift(readCap);
+							outMsg.readFromBytes(serverIdBytes, 0, serverIdBytes.length);    //为outMsg添加后缀，使其成为合法消息
+							String data = outMsg.toString(outMsg.readCap());
+							int age = task.msg.getAge();
 							send.sendMsg(outMsg);
 							System.out.println("成功发送数量：" + integer.incrementAndGet() + "内容:  " + data + "age:" + age);
 						}
-						if (id.writeOut(id.getReadOff() + IdFactory.IDLEN) == '0') {     //已对有所ids完成msg发送
+
+						if (id.writeOut(IdFactory.IDLEN + 1) == '0') {     //已对有所ids完成msg发送
 							sendEnd = true;
 							task.msg.clear();
 						}
@@ -114,7 +118,7 @@ public class WriterProcessor implements Runnable {
 						notEndTask.add(task);
 					}
 				} else if (!task.msg.isAlive()) {
-					System.out.println(task.msg.toString() + " age:" + task.msg.age);
+					System.out.println(task.msg.toString() + " age:" + task.msg.getAge());
 				}
 				task = (NewWriteTask) accept.tasks.poll();
 			}
@@ -125,26 +129,8 @@ public class WriterProcessor implements Runnable {
 		}
 	}
 
-	private boolean isLogin(BufferBlock bufferBlock) {
+	private boolean isLogin(BufferBlockProxy proxy) {
 		byte[] login = "login".getBytes();
-		int i = -1;
-		try {
-			i = CodeUtil.findBytesByBM(bufferBlock.bytes, bufferBlock.readOff, bufferBlock.readCap(),
-					login, 0, login.length);
-		} catch (Exception e) {
-			System.out.println("CodeUtil findBytesByBM error");
-			e.printStackTrace();
-		}
-		return i != -1;
-	}
-
-	/**
-	 * @param source    被复制的
-	 * @param target    目标
-	 * @param count
-	 * @throws Exception 复制source的内容，不移动source的readOff指针
-	 */
-	private void copyMsg(BufferBlock source, BufferBlock target, int count) throws Exception {
-		source.writeToOtherWithOutChange(target, count);
+		return proxy.findBytes(login, 0, login.length);
 	}
 }

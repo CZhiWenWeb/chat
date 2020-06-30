@@ -2,7 +2,6 @@ package com.chat.cache;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @Author: czw
@@ -14,8 +13,8 @@ public class BufferRing {
 	private final static int KB = 1024;
 	private final static int MB = KB * 1024;
 	private final static double percent = 0.5;
-	private static int capacity = 150 * KB;
-	static final int maxAges = 2;      //最多经历ags次GC
+	private static int capacity = 4 * MB;   //当不发生大数量强制GC时为合适容量
+	static final int maxAges = 3;      //最多经历ags次GC，大的次数会导致旧数据被反复复制，错误的信息不能及时被丢弃
 	private byte[] primary = new byte[(int) (capacity * percent)];
 	private byte[] surviorF = new byte[(int) (capacity * (1 - percent))];
 	//private byte[] surviorS = new byte[surviorF.length];
@@ -36,31 +35,31 @@ public class BufferRing {
 		//this.surviorSBf = new MessageBuffer(surviorS);
 	}
 
-	public synchronized BufferBlock dispatcher(int count) throws Exception {
+	public synchronized NewBufferBlock dispatcher(int count) throws Exception {
 		if (isGC(count)) {
 			int temp = 0;
 			int beforced = 0;
 			MessageBuffer survior = isF ? surviorFBf : primaryBf;  //isF为true时有效数据复制至surviorFBf
 			BlockingQueue oldQue = bufferBlockQue;
 			bufferBlockQue = new LinkedBlockingQueue();
-			BufferBlock bufferBlock = (BufferBlock) oldQue.poll();
+			NewBufferBlock bufferBlock = (NewBufferBlock) oldQue.poll();
 			while (bufferBlock != null) {
-				if (bufferBlock.age > maxAges) {
-					bufferBlock.clear();    //超过次数强制GC
-					beforced += bufferBlock.readCap();
-					System.out.println(bufferBlock.toString() + "强制age:" + bufferBlock.age);
+				BufferBlockProxy proxy = bufferBlock.proxy;
+				if (proxy.bufferBlock.age > maxAges) {      //age仅在此同步块中被操作，无需同步
+					proxy.clear();    //超过次数强制GC
+					beforced += proxy.readCap();
+					System.out.println(bufferBlock.toString() + "强制age:" + proxy.bufferBlock.age);
 				}
-				if (bufferBlock.alive) {
+				if (proxy.isAlive()) {
 					try {
-						temp += bufferBlock.readCap();
-						BufferBlock newBB = survior.dispatcher(bufferBlock.readCap());
-						bufferBlock.copyTo(newBB);  //复制之后原引用地址指向新的byte[],newBB.alive=false,因为有对象指向原引用地址
+						temp += proxy.readCap();    //temp获取的可能是过期数据
+
+						proxy.copyTo(survior);  //复制之后原引用地址指向新的byte[],newBB.alive=false,因为有对象指向原引用地址
 					} catch (Exception e) {
 						System.out.println("分配失败");
-						e.printStackTrace();
 					}
 				}
-				bufferBlock = (BufferBlock) oldQue.poll();
+				bufferBlock = (NewBufferBlock) oldQue.poll();
 			}
 			if (isF) {
 				primaryBf.reset();
@@ -80,49 +79,10 @@ public class BufferRing {
 
 	private boolean isGC(int count) {
 		MessageBuffer buffer = isF ? primaryBf : surviorFBf;
-		if (buffer.capacity.intValue() - buffer.writePos.intValue() < count) {
-			return true;
-		}
-		return false;
-	}
-
-	class MessageBuffer {
-		byte[] bytes;   //连续内存
-		AtomicInteger capacity;   //最大可用内存
-		AtomicInteger writePos;   //写指针位置
-
-		public MessageBuffer(byte[] bytes) {
-			this.bytes = bytes;
-			this.capacity = new AtomicInteger(bytes.length);
-			this.writePos = new AtomicInteger(0);
-		}
-
-		public BufferBlock dispatcher(int count) throws Exception {
-			if (capacity.intValue() - writePos.intValue() > count) {
-				BufferBlock bufferBlock = new BufferBlock(bytes, writePos.intValue(), count);
-				writePos.getAndAdd(count);
-				return bufferBlock;
-			} else {
-				throw new Exception("内存不足：剩余" + (capacity.intValue() - writePos.intValue()));
-			}
-		}
-
-		public void reset() {
-			writePos.set(0);
-		}
+		return buffer.capacity.intValue() - buffer.writePos.intValue() < count;
 	}
 
 	static class Holder {
 		static BufferRing bufferRing = new BufferRing();
-	}
-
-	public static void main(String[] args) throws Exception {
-		int cap = 500;
-		BufferRing.capacity = 10 * KB;
-		BufferRing bufferRing = new BufferRing();
-		bufferRing.dispatcher(cap);
-		for (int i = 0; i < 17; i++) {
-			bufferRing.dispatcher(cap).clear();
-		}
 	}
 }

@@ -1,7 +1,8 @@
 package com.chat.message;
 
-import com.chat.cache.BufferBlock;
+import com.chat.cache.BufferBlockProxy;
 import com.chat.cache.BufferRing;
+import com.chat.cache.NewBufferBlock;
 import com.chat.util.IdFactory;
 
 import java.nio.charset.StandardCharsets;
@@ -19,7 +20,7 @@ import java.nio.charset.StandardCharsets;
  */
 public class Message {
 	private static BufferRing bufferRing = BufferRing.getInstance();
-	private BufferBlock datas;
+	private BufferBlockProxy datas;
 	public static int len = 10;
 	private static int id = IdFactory.IDLEN;
 	public static int startIndex = len + id;
@@ -44,26 +45,29 @@ public class Message {
 		if (lengthA > ((1 << len) - 1))
 			throw new Exception("to过长");
 
-		datas = bufferRing.dispatcher(startIndex + bodyLen +    //头部+body需要的内存
+		NewBufferBlock bufferBlock = bufferRing.dispatcher(startIndex + bodyLen +    //头部+body需要的内存
 				lengthA);   //接收Id需要的内存
-
+		datas = bufferBlock.proxy;
 		byte[] header = (binaryLenB + send).getBytes(StandardCharsets.UTF_8);
 		byte[] zeroBeforeH = fillZero(startIndex - header.length);
-		datas.readFromBytes(zeroBeforeH);   //头部长度不足填充0
-		datas.readFromBytes(header);      //头部写入
-		datas.readFromBytes(body.getBytes(StandardCharsets.UTF_8));          //body写入
+		datas.readFromBytes(zeroBeforeH, 0, zeroBeforeH.length);   //头部长度不足填充0
+		datas.readFromBytes(header, 0, header.length);      //头部写入
+		byte[] bodyBytes = body.getBytes(StandardCharsets.UTF_8);
+		datas.readFromBytes(bodyBytes, 0, bodyBytes.length);          //body写入
 		String binaryLenA = Integer.toBinaryString(lengthA);
 		byte[] byteLenA = binaryLenA.getBytes(StandardCharsets.UTF_8);
 		byte[] zeroBeforeA = fillZero(len - byteLenA.length);
-		datas.readFromBytes(zeroBeforeA);   //头部长度不足填充0
-		datas.readFromBytes(byteLenA);   //len写入
+		datas.readFromBytes(zeroBeforeA, 0, zeroBeforeA.length);   //头部长度不足填充0
+		datas.readFromBytes(byteLenA, 0, byteLenA.length);   //len写入
+		byte[] temp;
 		for (String s : to) {
-			datas.readFromBytes(s.getBytes(StandardCharsets.UTF_8));
+			temp = s.getBytes(StandardCharsets.UTF_8);
+			datas.readFromBytes(temp, 0, temp.length);
 		}
 		isComplete = true;
 	}
 
-	public BufferBlock getMsg() {
+	public BufferBlockProxy getMsg() {
 		return datas;
 	}
 

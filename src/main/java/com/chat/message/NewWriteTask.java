@@ -1,6 +1,6 @@
 package com.chat.message;
 
-import com.chat.cache.BufferBlock;
+import com.chat.cache.BufferBlockProxy;
 
 import java.util.Queue;
 
@@ -11,13 +11,11 @@ import java.util.Queue;
  * @Description:
  */
 public class NewWriteTask {
-	public BufferBlock msg;     //包含消息头消息体
-	public Queue<BufferBlock> ids;   //ids和标识符
+	public BufferBlockProxy msg;     //包含消息头消息体
+	public Queue<BufferBlockProxy> ids;   //ids和标识符
 
-	public NewWriteTask(BufferBlock msg, Queue queue) {
+	public NewWriteTask(BufferBlockProxy msg, Queue queue) {
 		this.msg = msg;
 		this.ids = queue;
-		if (msg.count > 54 || msg.readCap() > 54)
-			System.out.println("msg异常");
 	}
 }

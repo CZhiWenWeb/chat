@@ -1,6 +1,6 @@
 package com.chat.message;
 
-import com.chat.cache.BufferBlock;
+import com.chat.cache.BufferBlockProxy;
 import com.chat.util.CodeUtil;
 import com.chat.util.FileUtil;
 import com.chat.util.IdFactory;
@@ -24,11 +24,13 @@ public class ParseMsgFromServer {
 		}
 	}
 
-	public static String printMsg(BufferBlock bufferBlock) {
+	public static String printMsg(BufferBlockProxy proxy) {
 		try {
-			int len = CodeUtil.bytesToInt(bufferBlock.bytes, bufferBlock.readOff, Message.len);
-			String from = bufferBlock.toString(bufferBlock.readOff + Message.len, IdFactory.IDLEN);
-			String msg = bufferBlock.toString(bufferBlock.readOff + Message.startIndex, len - Message.startIndex);
+			int len = proxy.parseMsgLen(Message.len);
+			proxy.readOffRightShift(Message.len);
+			String from = proxy.toString(IdFactory.IDLEN);
+			proxy.readOffRightShift(IdFactory.IDLEN);
+			String msg = proxy.toString(len - Message.startIndex);
 			return msg + ":from" + from;
 		} catch (Exception e) {
 			e.printStackTrace();
